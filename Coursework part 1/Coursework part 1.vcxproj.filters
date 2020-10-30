@@ -18,9 +18,15 @@
     <ClInclude Include="MazeCreator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MazeGeneratorMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MazeCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MazeGeneratorMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

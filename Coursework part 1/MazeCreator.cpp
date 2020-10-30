@@ -1,28 +1,7 @@
-#include "MazeCreator.h"
 #include <iostream>
+#include "MazeCreator.h"
 
-
-int main() {
-
-
-	std::cout << MazeCreator::generateMap<<'\n';
-
-
-	return 0;
-}
-
-
-
-int MazeCreator::generateMap() {
-	int mapSize;
-	int numExits;
-
-	std::cout << "Choose map size between 3-50"<<'\n';
-	std::cin >> mapSize;
-	std::cout << "Choose number of Exits" << '\n';
-	std::cin >> numExits;
-
-
+int MazeCreator::generateMap(int mapSize, int numExits) {
 
 	return 0;
 }
