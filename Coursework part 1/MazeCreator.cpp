@@ -25,3 +25,13 @@ int MazeCreator::getInputNumExits()
 	return numExits;
 }
 
+int MazeCreator::getMapSize()
+{
+	return mapSize;
+}
+
+
+int MazeCreator::getNumExits() {
+	return numExits;
+}
+

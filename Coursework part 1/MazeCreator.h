@@ -9,7 +9,8 @@ public:
 	int generateMap(int mapSize, int numExits);
 	int getInputMapSize();
 	int getInputNumExits();
-	
+	int getMapSize();
+	int getNumExits();
 
 
 };
