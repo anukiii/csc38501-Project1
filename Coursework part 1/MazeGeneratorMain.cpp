@@ -1,5 +1,6 @@
 #include "MazeGeneratorMain.h"
 #include"MazeCreator.h"
+#include <iostream>
 
 int main() {
 	MazeCreator m;
@@ -9,5 +10,7 @@ int main() {
 
 	//Creates the map
 	m.generateMap(m.getMapSize(),m.getNumExits());
+
+
 
 }
