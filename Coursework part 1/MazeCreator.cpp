@@ -1,8 +1,9 @@
 #include <iostream>
+#include <fstream>
 #include "MazeCreator.h"
 
 int MazeCreator::generateMap(int mapSize, int numExits) {
-
+	std::ofstream newMapFile("TestFile.txt");
 	return 0;
 }
 
