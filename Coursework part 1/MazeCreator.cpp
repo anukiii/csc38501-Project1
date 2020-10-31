@@ -5,9 +5,6 @@
 #include <list>
 
 int MazeCreator::generateMap(int mapSize, int numExits) {
-	std::ofstream newMapFile(fileName +".txt");
-	//newMapFile << "bumpis"<<'\n';
-	//std::cout << RNG(mapSize);
 	std::list<int> exitPos;
 	std::cout << numExits << '\n';
 	std::cout << mapSize << '\n';
@@ -18,18 +15,46 @@ int MazeCreator::generateMap(int mapSize, int numExits) {
 	}
 
 
+	DrawMap(fileName + ".txt", mapSize, exitPos);
+
+
 	return 0;
 }
 
-std::list<int> MazeCreator::allocateExits(int numExits, std::list<int> exitList) {
+std::list<int> MazeCreator::allocateExits(int numExits, std::list<int> exitPos) {
 	for (int i = 0; i < numExits; i++) {
-		exitList.push_back(RNG(mapSize * 4)); // chooses possible exits	
+		exitPos.push_back(RNG(mapSize * 4)); // chooses possible exits	
 	}
-	exitList.unique(); //removes duplicates
-	return exitList;
+	exitPos.unique(); //removes duplicates
+	return exitPos;
 }
 
 
+int MazeCreator::DrawMap(std::string fileNameComplete, int mapSize, std::list<int> exitPos) {
+	std::ofstream file(fileNameComplete);
+	int xCoord = 0;
+	int yCoord = 0;
+	char currentTile;
+	//Map is drawn in Rows, starting top left and going down
+	for (int i = 0; i < mapSize; i++) { //vertical, AKA Y axis
+		for (int j = 0; j < mapSize; j++) {//horizontal, AKA X AXIS
+			currentTile = ' ';
+			currentTile = (i == 0 ? 'X':currentTile);
+			currentTile = (i == mapSize-1 ? 'X' : currentTile);
+			currentTile = (j == 0 ? 'X' : currentTile);
+			currentTile = (j == mapSize-1 ? 'X' : currentTile);
+			
+
+			file << currentTile;
+
+			xCoord++;//go down a row
+		}
+		file << '\n';
+		yCoord++;//next collumn
+	}
+
+	return 0;
+}
 
 //Random number Generation --
 int MazeCreator::RNG(int range) {

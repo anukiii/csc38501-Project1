@@ -6,10 +6,12 @@ class MazeCreator
 private:
 	int mapSize;
 	int numExits;
+	std::string fileName;
+
 	int RNG(int range); // generates a random number between 0 and range
 	std::list<int> allocateExits(int numExits, std::list<int> exitList);
-	std::string fileName;
-			
+	int DrawMap(std::string fileNameComplete, int mapSize, std::list<int> exitPos);
+
 public:
 	int generateMap(int mapSize, int numExits);//creates and populates maze file
 	void setInputMapSize();//gets user input for map size in tiles
