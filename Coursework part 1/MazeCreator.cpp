@@ -5,28 +5,25 @@
 #include <list>
 
 int MazeCreator::generateMap(int mapSize, int numExits) {
-	std::ofstream newMapFile("TestFile.txt");
+	std::ofstream newMapFile(fileName +".txt");
 	//newMapFile << "bumpis"<<'\n';
 	//std::cout << RNG(mapSize);
 	std::list<int> exitPos;
 	std::cout << numExits << '\n';
 	std::cout << mapSize << '\n';
 	while ((int)exitPos.size() < numExits) {
-		allocateExits(numExits,exitPos);
+		exitPos = allocateExits(numExits,exitPos);
+		exitPos.size();
 		//breakout statement??
 	}
 
-	for (int i = 0; i < mapSize; i++) {
-
-	}
 
 	return 0;
 }
 
 std::list<int> MazeCreator::allocateExits(int numExits, std::list<int> exitList) {
 	for (int i = 0; i < numExits; i++) {
-		int temp = RNG(mapSize * 4);
-		exitList.push_back(temp); // chooses possible exits	
+		exitList.push_back(RNG(mapSize * 4)); // chooses possible exits	
 	}
 	exitList.unique(); //removes duplicates
 	return exitList;
@@ -45,18 +42,29 @@ int MazeCreator::RNG(int range) {
 
 
 //User input functions --
-int MazeCreator::getInputMapSize()
+void MazeCreator::setInputMapSize()
 {
-	std::cout << "Choose map size between 3-50" << '\n';
+	std::cout << "Choose map size (minimum 4) : ";
 	std::cin >> mapSize;
-	return mapSize;
+	//return mapSize;
 }
 
-int MazeCreator::getInputNumExits()
+void MazeCreator::setInputNumExits()
 {
-	std::cout << "Choose number of Exits" << '\n';
+	std::cout << "Choose number of Exits : ";
 	std::cin >> numExits;
-	return numExits;
+	//return numExits;
+}
+
+
+void MazeCreator::setInputFileName()
+{
+	std::cout << "What name would you like to save the file to? : ";
+	//std::cin >> fileName;
+	std::cin.get();
+	std::getline(std::cin, fileName);
+	std::cout << "File will be saved as " << fileName << ".txt" << '\n';
+	//std::cout << fileName << '\n';
 }
 
 //Getters --
