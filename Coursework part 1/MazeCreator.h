@@ -1,10 +1,12 @@
 #pragma once
+#include<list>
 class MazeCreator
 {
 private:
 	int mapSize;
 	int numExits;
 	int RNG(int range); // generates a random number between 0 and range
+	std::list<int> allocateExits(int numExits, std::list<int> exitList);
 			
 public:
 	int generateMap(int mapSize, int numExits);//creates and populates maze file
@@ -12,7 +14,6 @@ public:
 	int getInputNumExits();//gets user input for number of exits
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
-
 
 };
 
