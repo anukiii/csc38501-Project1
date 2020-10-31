@@ -34,15 +34,30 @@ int MazeCreator::DrawMap(std::string fileNameComplete, int mapSize, std::list<in
 	std::ofstream file(fileNameComplete);
 	int xCoord = 0;
 	int yCoord = 0;
+	int wallCounter = 0;//where to put exits
 	char currentTile;
 	//Map is drawn in Rows, starting top left and going down
 	for (int i = 0; i < mapSize; i++) { //vertical, AKA Y axis
 		for (int j = 0; j < mapSize; j++) {//horizontal, AKA X AXIS
-			currentTile = ' ';
+			currentTile = 'p';
+			
+			//ALGORITHM GOES HERE
+			
+			
+			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank
+			currentTile = (((mapSize / 2) - 1 <= i <= (mapSize / 2) + 1) ? ' ' : currentTile);
+
+			
+			//outside walls
 			currentTile = (i == 0 ? 'X':currentTile);
 			currentTile = (i == mapSize-1 ? 'X' : currentTile);
 			currentTile = (j == 0 ? 'X' : currentTile);
 			currentTile = (j == mapSize-1 ? 'X' : currentTile);
+
+			//centerpoint
+			currentTile = (j == (mapSize / 2)&& i == (mapSize / 2)? 'S' : currentTile);
+						
+			
 			
 
 			file << currentTile;
