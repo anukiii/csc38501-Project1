@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Cell.h" />
     <ClInclude Include="MazeCreator.h" />
     <ClInclude Include="MazeGeneratorMain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Cell.cpp" />
     <ClCompile Include="MazeCreator.cpp" />
     <ClCompile Include="MazeGeneratorMain.cpp" />
   </ItemGroup>

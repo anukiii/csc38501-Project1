@@ -20,6 +20,7 @@ public:
 	
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
+	//void DrawToFile();
 
 };
 
