@@ -45,7 +45,11 @@ int MazeCreator::DrawMap(std::string fileNameComplete, int mapSize, std::list<in
 			
 			
 			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank
-			currentTile = (((mapSize / 2) - 1 <= i <= (mapSize / 2) + 1) ? ' ' : currentTile);
+			
+			currentTile = ((mapSize / 2)-1 <= i && i <= (mapSize / 2) + 1&& (mapSize / 2) - 1 <= j && j <= (mapSize / 2) + 1 ? ' ' : currentTile);
+			//currentTile = ((mapSize / 2)-1 <= j && j <= (mapSize / 2) + 1? ' ' : currentTile);
+			//currentTile = ((mapSize / 2)+1 > i ? 'v' : currentTile);
+			//currentTile = ((mapSize / 2)-1 <= j ? ' ' : currentTile);
 
 			
 			//outside walls

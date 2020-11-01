@@ -1,20 +1,20 @@
 XXXXXXXXXXXXXXXXXXXX
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X         S        X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
-X                  X
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+Xpppppppp   pppppppX
+Xpppppppp S pppppppX
+Xpppppppp   pppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
+XppppppppppppppppppX
 XXXXXXXXXXXXXXXXXXXX
