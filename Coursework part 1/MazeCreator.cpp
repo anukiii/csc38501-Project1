@@ -15,7 +15,7 @@ int MazeCreator::generateMap(int mapSize, int numExits) {
 	}
 
 
-	DrawMap(fileName + ".txt", mapSize, exitPos);
+	drawToFile(fileName + ".txt",exitPos);
 
 
 	return 0;
@@ -30,44 +30,8 @@ std::list<int> MazeCreator::allocateExits(int numExits, std::list<int> exitPos) 
 }
 
 
-int MazeCreator::DrawMap(std::string fileNameComplete, int mapSize, std::list<int> exitPos) {
-	std::ofstream file(fileNameComplete);
-	int xCoord = 0;
-	int yCoord = 0;
-	int wallCounter = 0;//where to put exits
-	char currentTile;
-	//Map is drawn in Rows, starting top left and going down
-	for (int i = 0; i < mapSize; i++) { //vertical, AKA Y axis
-		for (int j = 0; j < mapSize; j++) {//horizontal, AKA X AXIS
-			currentTile = 'p';
-			
-			//ALGORITHM GOES HERE
-			
-			
-			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
-			currentTile = ((mapSize / 2)-1 <= i && i <= (mapSize / 2) + 1&& (mapSize / 2) - 1 <= j && j <= (mapSize / 2) + 1 ? ' ' : currentTile);
+int MazeCreator::drawMap(std::list<int> exitPos) {
 
-
-			
-			//outside walls
-			currentTile = (i == 0 ? 'X':currentTile);
-			currentTile = (i == mapSize-1 ? 'X' : currentTile);
-			currentTile = (j == 0 ? 'X' : currentTile);
-			currentTile = (j == mapSize-1 ? 'X' : currentTile);
-
-			//centerpoint
-			currentTile = (j == (mapSize / 2)&& i == (mapSize / 2)? 'S' : currentTile);
-						
-			
-			
-
-			file << currentTile;
-
-			xCoord++;//go down a row
-		}
-		file << '\n';
-		yCoord++;//next collumn
-	}
 
 	return 0;
 }
@@ -117,5 +81,47 @@ int MazeCreator::getMapSize()
 
 int MazeCreator::getNumExits() {
 	return numExits;
+}
+
+void MazeCreator::drawToFile(std::string fileNameComplete, std::list<int> exitPos)
+{
+	std::ofstream file(fileNameComplete);
+	int xCoord = 0;
+	int yCoord = 0;
+	int wallCounter = 0;//where to put exits
+	char currentTile;
+	//Map is drawn in Rows, starting top left and going down
+	for (int i = 0; i < mapSize; i++) { //vertical, AKA Y axis
+		for (int j = 0; j < mapSize; j++) {//horizontal, AKA X AXIS
+			currentTile = 'p';
+
+			//ALGORITHM GOES HERE
+
+
+			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
+			currentTile = ((mapSize / 2) - 1 <= i && i <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= j && j <= (mapSize / 2) + 1 ? ' ' : currentTile);
+
+
+
+			//outside walls
+			currentTile = (i == 0 ? 'X' : currentTile);
+			currentTile = (i == mapSize - 1 ? 'X' : currentTile);
+			currentTile = (j == 0 ? 'X' : currentTile);
+			currentTile = (j == mapSize - 1 ? 'X' : currentTile);
+
+			//centerpoint
+			currentTile = (j == (mapSize / 2) && i == (mapSize / 2) ? 'S' : currentTile);
+
+
+
+
+			file << currentTile;
+
+			xCoord++;//go down a row
+		}
+		file << '\n';
+		yCoord++;//next collumn
+	}
+
 }
 

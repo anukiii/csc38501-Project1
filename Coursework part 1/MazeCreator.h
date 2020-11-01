@@ -10,8 +10,8 @@ private:
 
 	int RNG(int range); // generates a random number between 0 and range
 	std::list<int> allocateExits(int numExits, std::list<int> exitList);
-	int DrawMap(std::string fileNameComplete, int mapSize, std::list<int> exitPos);
-
+	int drawMap(std::list<int> exitPos);
+	void drawToFile(std::string fileNameComplete, std::list<int> exitPos);
 public:
 	int generateMap(int mapSize, int numExits);//creates and populates maze file
 	void setInputMapSize();//gets user input for map size in tiles
@@ -20,7 +20,7 @@ public:
 	
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
-	//void DrawToFile();
+
 
 };
 
