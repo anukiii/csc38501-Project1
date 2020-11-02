@@ -4,7 +4,6 @@
 
 int main() {
 	MazeCreator m;
-	
 	m.startMenu();
 
 }

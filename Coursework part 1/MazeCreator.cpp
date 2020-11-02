@@ -191,6 +191,8 @@ void MazeCreator::drawToFile(std::list<Cell> cellList)
 	for (it = cellList.begin(); it != cellList.end();it++) {
 		file << it->getCurrentChar();
 	}
+	file.close();
+
 	int choice;
 	std::cout << "Please select one of the following options\n1:Return to main menu\n2:Exit\n";
 	std::cin >> choice;
