@@ -6,6 +6,7 @@
 #include "Cell.h"
 
 int MazeCreator::generateMap(int mapSize, int numExits) {
+
 	std::list<int> exitPos;
 	while ((int)exitPos.size() < numExits) {
 		exitPos = allocateExits(numExits,exitPos);
@@ -17,7 +18,32 @@ int MazeCreator::generateMap(int mapSize, int numExits) {
 
 	std::list<Cell> cellList = drawMap(exitPos);
 	printOnScreen(cellList);
-	drawToFile(fileName + ".txt",cellList);
+	int choice;
+	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
+	std::cin >> choice;
+	while (std::cin.fail() || choice < 1 || choice > 3) {
+		std::cout << "Error:Please Type a valid option " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
+		std::cin >> choice;
+	}
+	switch (choice) {
+	case 1:
+		drawToFile(cellList);
+		break;
+	case 2:
+		startMenu();
+		break;
+	case 3:
+		std::cout << "Bye Bye";
+		break;
+
+	}
+
+
+
+
 
 
 	return 0;
@@ -52,6 +78,7 @@ std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
 			tempCell.setXPos(x);
 			tempCell.setYPos(y);
 			currentTile = 'p'; //default for tile;
+
 
 			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
 			currentTile = ((mapSize / 2) - 1 <= y && y <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= x && x <= (mapSize / 2) + 1 ? ' ' : currentTile);
@@ -101,27 +128,48 @@ int MazeCreator::RNG(int range) {
 //User input functions --
 void MazeCreator::setInputMapSize()
 {
-	std::cout << "Choose map size (minimum 4) : ";
-	std::cin >> mapSize;
-	//return mapSize;
+	
+		std::cout << "Choose map size (minimum 4) : ";
+		std::cin >> mapSize;
+
+		while (std::cin.fail()|| mapSize<4) {
+			std::cout << "Error:Please insert an integer Value less than 4: " << std::endl;
+			std::cin.clear();
+			std::cin.ignore(256, '\n');
+			std::cin >> mapSize;
+		}
+
+		//return mapSize;
+
+	;
 }
 
 void MazeCreator::setInputNumExits()
 {
-	std::cout << "Choose number of Exits : ";
-	std::cin >> numExits;
-	//return numExits;
+	//do {
+		std::cout << "Choose number of Exits : ";
+		std::cin >> numExits;
+
+		while (std::cin.fail()||numExits<1) {
+			std::cout << "Error:Please insert an integer Value : " << std::endl;
+			std::cin.clear();
+			std::cin.ignore(256, '\n');
+			std::cin >> numExits;
+		}
+
+
+//	}while
 }
 
 
 void MazeCreator::setInputFileName()
 {
 	std::cout << "What name would you like to save the file to? : ";
-	//std::cin >> fileName;
 	std::cin.get();
 	std::getline(std::cin, fileName);
-	std::cout << "File will be saved as " << fileName << ".txt" << '\n';
-	//std::cout << fileName << '\n';
+	fileName += ".txt";//saves it as a text file
+	std::cout << "File will be saved as " << fileName << ".txt" << '\n\n';
+
 }
 
 //Getters --
@@ -135,13 +183,66 @@ int MazeCreator::getNumExits() {
 	return numExits;
 }
 
-void MazeCreator::drawToFile(std::string fileNameComplete, std::list<Cell> cellList)
+void MazeCreator::drawToFile(std::list<Cell> cellList)
 {
-	std::ofstream file(fileNameComplete);
+	setInputFileName();
+	std::ofstream file(fileName);
 	std::list<Cell>::iterator it;
 	for (it = cellList.begin(); it != cellList.end();it++) {
 		file << it->getCurrentChar();
 	}
+	int choice;
+	std::cout << "Please select one of the following options\n1:Return to main menu\n2:Exit\n";
+	std::cin >> choice;
+	while (std::cin.fail() || choice < 1 || choice >2) {
+		std::cout << "Error:Please Type a valid option " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+		std::cout << "Please select one of the following options\n1:Return to main menu\n2:Exit\n";
+		std::cin >> choice;
+	}
+
+	switch (choice) {
+	case 1:
+		startMenu();
+		break;
+	case 2:
+		std::cout << "Bye Bye\n";
+		break;
+
+
+	}
 
 }
 
+
+void MazeCreator::startMenu() {
+	int choice;
+	std::cout << "Please select one of the following options\n1: New Maze\n2:Load Maze \n3:Exit";
+	std::cin >> choice;
+	while (std::cin.fail() || choice < 1 || choice > 3) {
+		std::cout << "Error:Please Type a valid option " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+		std::cout << "Please select one of the following options\n1: New Maze\n2:Load Maze \n3:Exit\n";
+		std::cin >> choice;
+	}
+
+	switch (choice) {
+	case 1:
+		setInputMapSize();
+		setInputNumExits();
+		generateMap(mapSize, numExits);
+		break;
+	case 2:
+		std::cout << "This feature has to still be implemented \n\n";
+		startMenu();
+		break;
+	case 3:
+		std::cout << "Bye Bye";
+		break;
+
+	}
+
+
+}
