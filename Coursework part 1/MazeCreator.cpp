@@ -3,6 +3,7 @@
 #include "MazeCreator.h"
 #include <random>
 #include <list>
+#include "Cell.h"
 
 int MazeCreator::generateMap(int mapSize, int numExits) {
 	std::list<int> exitPos;
@@ -30,10 +31,48 @@ std::list<int> MazeCreator::allocateExits(int numExits, std::list<int> exitPos) 
 }
 
 
-int MazeCreator::drawMap(std::list<int> exitPos) {
+std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
+	std::list<Cell> listOfCells;
+	Cell tempCell;
+	int idCounter = 0;
+	char currentTile;
+	for (int y = 0; y < mapSize; y++) {//Y choord
+		for (int x = 0; x < mapSize; x++) {//X choord
+			idCounter++;
+			tempCell.setMazeId(idCounter);
+			tempCell.setXPos(x);
+			tempCell.setYPos(y);
+			currentTile = 'p'; //default for tile;
+
+			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
+			currentTile = ((mapSize / 2) - 1 <= y && y <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= x && x <= (mapSize / 2) + 1 ? ' ' : currentTile);
 
 
-	return 0;
+
+			//outside walls
+			currentTile = (y == 0 ? 'X' : currentTile);
+			currentTile = (y == mapSize - 1 ? 'X' : currentTile);
+			currentTile = (x == 0 ? 'X' : currentTile);
+			currentTile = (x == mapSize - 1 ? 'X' : currentTile);
+
+			//centerpoint
+			currentTile = (x == (mapSize / 2) && y == (mapSize / 2) ? 'S' : currentTile);
+
+
+
+			tempCell.setCurrentChar(currentTile);
+
+			listOfCells.push_back(tempCell);
+		}
+		tempCell.setMazeId(-1);
+		tempCell.setXPos(-1);
+		tempCell.setYPos(-1);
+		tempCell.setCurrentChar('n');
+		listOfCells.push_back(tempCell);
+	}
+
+
+	return listOfCells;
 }
 
 //Random number Generation --

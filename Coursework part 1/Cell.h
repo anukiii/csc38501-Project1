@@ -14,6 +14,10 @@ public:
 	int getMazeId() { return mazeId; }
 	std::list<int> getConnections() { return connections; }
 	char getCurrentChar(){ return currentChar; }
-
+	void setXPos(int xPosNew) { xPos = xPosNew; }
+	void setYPos(int yPosNew) { yPos = yPosNew; }
+	void setMazeId(int mazeIdNew) { mazeId = mazeIdNew; }
+	void setCurrentChar(int currentCharNew) { currentChar = currentCharNew; }
+	void addConnection(int newConnection) { connections.push_back(newConnection); }
 };
 
