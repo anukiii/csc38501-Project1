@@ -7,16 +7,17 @@
 
 int MazeCreator::generateMap(int mapSize, int numExits) {
 	std::list<int> exitPos;
-	std::cout << numExits << '\n';
-	std::cout << mapSize << '\n';
 	while ((int)exitPos.size() < numExits) {
 		exitPos = allocateExits(numExits,exitPos);
 		exitPos.size();
 		//breakout statement??
 	}
 
+	std::cout << '\n';
 
-	drawToFile(fileName + ".txt",exitPos);
+	std::list<Cell> cellList = drawMap(exitPos);
+	printOnScreen(cellList);
+	drawToFile(fileName + ".txt",cellList);
 
 
 	return 0;
@@ -30,12 +31,20 @@ std::list<int> MazeCreator::allocateExits(int numExits, std::list<int> exitPos) 
 	return exitPos;
 }
 
+void MazeCreator::printOnScreen(std::list<Cell> cellList) {
+	std::list<Cell>::iterator it;
+	for (it = cellList.begin(); it != cellList.end(); it++) {
+		std::cout << it->getCurrentChar();
+	}
+}
 
 std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
 	std::list<Cell> listOfCells;
 	Cell tempCell;
 	int idCounter = 0;
 	char currentTile;
+	int wallExitCounter =0;
+	std::list<int>::iterator exitIt;
 	for (int y = 0; y < mapSize; y++) {//Y choord
 		for (int x = 0; x < mapSize; x++) {//X choord
 			idCounter++;
@@ -47,8 +56,6 @@ std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
 			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
 			currentTile = ((mapSize / 2) - 1 <= y && y <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= x && x <= (mapSize / 2) + 1 ? ' ' : currentTile);
 
-
-
 			//outside walls
 			currentTile = (y == 0 ? 'X' : currentTile);
 			currentTile = (y == mapSize - 1 ? 'X' : currentTile);
@@ -58,8 +65,14 @@ std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
 			//centerpoint
 			currentTile = (x == (mapSize / 2) && y == (mapSize / 2) ? 'S' : currentTile);
 
-
-
+			//Exits
+			wallExitCounter = (currentTile == 'X' ? wallExitCounter + 1 : wallExitCounter);
+			//Iterates through list of Exits
+			for (exitIt = exitPos.begin(); exitIt != exitPos.end(); exitIt++) {
+				currentTile = (*exitIt == wallExitCounter ? 'E' : currentTile);
+				*exitIt = (*exitIt == wallExitCounter ? -1 : *exitIt);//Sets it to -1 so it isn't checked again
+			}
+			
 			tempCell.setCurrentChar(currentTile);
 
 			listOfCells.push_back(tempCell);
@@ -67,7 +80,7 @@ std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
 		tempCell.setMazeId(-1);
 		tempCell.setXPos(-1);
 		tempCell.setYPos(-1);
-		tempCell.setCurrentChar('n');
+		tempCell.setCurrentChar('\n');
 		listOfCells.push_back(tempCell);
 	}
 
@@ -122,44 +135,12 @@ int MazeCreator::getNumExits() {
 	return numExits;
 }
 
-void MazeCreator::drawToFile(std::string fileNameComplete, std::list<int> exitPos)
+void MazeCreator::drawToFile(std::string fileNameComplete, std::list<Cell> cellList)
 {
 	std::ofstream file(fileNameComplete);
-	int xCoord = 0;
-	int yCoord = 0;
-	int wallCounter = 0;//where to put exits
-	char currentTile;
-	//Map is drawn in Rows, starting top left and going down
-	for (int i = 0; i < mapSize; i++) { //vertical, AKA Y axis
-		for (int j = 0; j < mapSize; j++) {//horizontal, AKA X AXIS
-			currentTile = 'p';
-
-			//ALGORITHM GOES HERE
-
-
-			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
-			currentTile = ((mapSize / 2) - 1 <= i && i <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= j && j <= (mapSize / 2) + 1 ? ' ' : currentTile);
-
-
-
-			//outside walls
-			currentTile = (i == 0 ? 'X' : currentTile);
-			currentTile = (i == mapSize - 1 ? 'X' : currentTile);
-			currentTile = (j == 0 ? 'X' : currentTile);
-			currentTile = (j == mapSize - 1 ? 'X' : currentTile);
-
-			//centerpoint
-			currentTile = (j == (mapSize / 2) && i == (mapSize / 2) ? 'S' : currentTile);
-
-
-
-
-			file << currentTile;
-
-			xCoord++;//go down a row
-		}
-		file << '\n';
-		yCoord++;//next collumn
+	std::list<Cell>::iterator it;
+	for (it = cellList.begin(); it != cellList.end();it++) {
+		file << it->getCurrentChar();
 	}
 
 }
