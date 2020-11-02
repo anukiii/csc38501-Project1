@@ -23,6 +23,7 @@ public:
 	void startMenu(); //Start Menu
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
+	void readFromFile();
 
 
 };

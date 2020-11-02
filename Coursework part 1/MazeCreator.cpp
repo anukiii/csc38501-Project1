@@ -164,11 +164,11 @@ void MazeCreator::setInputNumExits()
 
 void MazeCreator::setInputFileName()
 {
-	std::cout << "What name would you like to save the file to? : ";
+	std::cout << "What's the File Name? (no .txt needed) : ";
 	std::cin.get();
 	std::getline(std::cin, fileName);
 	fileName += ".txt";//saves it as a text file
-	std::cout << "File will be saved as " << fileName << ".txt" << '\n\n';
+	//std::cout << "File will be saved as " << fileName << ".txt" << '\n\n';
 
 }
 
@@ -217,16 +217,41 @@ void MazeCreator::drawToFile(std::list<Cell> cellList)
 
 }
 
+void MazeCreator::readFromFile() {
+
+	setInputFileName();
+	std::ifstream file(fileName);
+
+	if (file.is_open()) {
+		std::string tempLine;
+		while (std::getline(file, tempLine)) {
+			std::cout << tempLine << '\n';
+		}
+		file.close();
+	}
+	else {
+		std::cout << "Invalid file name, Please check if file is correctly named or present\nReturning you to main menu";
+
+	}
+	std::cout << "\nPress ENTER to return to main menu";
+	std::cin.ignore();
+	startMenu();
+
+
+}
+
+
+
 
 void MazeCreator::startMenu() {
 	int choice;
-	std::cout << "Please select one of the following options\n1: New Maze\n2:Load Maze \n3:Exit";
+	std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Exit\n";
 	std::cin >> choice;
 	while (std::cin.fail() || choice < 1 || choice > 3) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "Please select one of the following options\n1: New Maze\n2:Load Maze \n3:Exit\n";
+		std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Exit\n";
 		std::cin >> choice;
 	}
 
@@ -237,8 +262,7 @@ void MazeCreator::startMenu() {
 		generateMap(mapSize, numExits);
 		break;
 	case 2:
-		std::cout << "This feature has to still be implemented \n\n";
-		startMenu();
+		readFromFile();
 		break;
 	case 3:
 		std::cout << "Bye Bye";

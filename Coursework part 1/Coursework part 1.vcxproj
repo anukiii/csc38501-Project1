@@ -149,6 +149,7 @@
     <ClCompile Include="MazeGeneratorMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="poop.txt" />
     <Text Include="TestFile.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
