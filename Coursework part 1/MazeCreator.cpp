@@ -117,12 +117,15 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 
 
 			
-			if (x > 0 && currentTile =='.') {
+			if (x > 0 && currentTile =='.' && x%2 ==1) {
 				tempCell.addConnection(idCounter-1);//block to the left
+				tempCell.addConnection(idCounter + 1);
 			}
-			if (y > 0 && currentTile == '.') {
+			/*
+			if (y > 0 && currentTile == '.'&& y% 2 ==1) {
 				tempCell.addConnection(idCounter - mapSize); ///one row up
-			}
+				tempCell.addConnection(idCounter + mapSize);
+			}*/
 
 			
 
@@ -149,6 +152,26 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 }
 
 std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector) {
+
+	for (int i = 0; i < cellVector.size(); i++) {
+		if (!cellVector.at(i).getConnections().empty()) {
+			cellVector.at(i).setCurrentChar('-'); //These are possile paths
+		}
+	}
+	int found = 0;
+	int centerPoint = (mapSize * mapSize) / 2;
+	int currentCell = centerPoint;
+
+	while (found < numExits) {
+
+
+
+
+	}
+	
+
+
+
 
 
 
@@ -281,9 +304,6 @@ void MazeCreator::readFromFile() {
 
 
 }
-
-
-
 
 void MazeCreator::startMenu() {
 	int choice;
