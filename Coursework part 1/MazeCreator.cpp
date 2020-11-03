@@ -19,13 +19,13 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	std::vector<Cell> cellVector = drawMap(exitPos);
 	printOnScreen(cellVector);
 	int choice;
-	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
+	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\n3:Exit\n";
 	std::cin >> choice;
 	while (std::cin.fail() || choice < 1 || choice > 3) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
+		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\n3:Exit\n";
 		std::cin >> choice;
 	}
 	switch (choice) {
@@ -74,7 +74,7 @@ void MazeCreator::printOnScreen(std::vector<Cell> cellVector) {
 std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 	std::vector<Cell> vectorOfCells;
 	Cell tempCell;
-	int idCounter = 0;
+	int idCounter = -1; //so first one is 0;
 	char currentTile;
 	int wallExitCounter =0;
 	std::vector<int>::iterator exitIt;
@@ -86,9 +86,6 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 			tempCell.setXPos(x);
 			tempCell.setYPos(y);
 			currentTile = '.'; //default for tile in board;
-
-			
-
 
 			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
 			currentTile = ((mapSize / 2) - 1 <= y && y <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= x && x <= (mapSize / 2) + 1 ? ' ' : currentTile);
@@ -109,32 +106,13 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 				currentTile = (*exitIt == wallExitCounter ? 'E' : currentTile);
 				*exitIt = (*exitIt == wallExitCounter ? -1 : *exitIt);//Sets it to -1 so it isn't checked again
 			}
-			
 
-			//all the rest, generation alg is applied
-			
-
-
-
-			
-			if (x > 0 && currentTile =='.') {
-				tempCell.addConnection(idCounter-1);//block to the left
-			}
-			if (y > 0 && currentTile == '.') {
-				tempCell.addConnection(idCounter - mapSize); ///one row up
-			}
-
-			
-
-			//currentTile = (RNG(2) == 1 && currentTile == '.' ? ' ' : currentTile);
-			//currentTile = (currentTile == '.' ? 'X' : currentTile);
-			
 			tempCell.setCurrentChar(currentTile);
 
 			vectorOfCells.push_back(tempCell);
 			tempCell.clearConnections();
 		}
-		idCounter--; //ignores walls
+		//idCounter--; //ignores walls
 		tempCell.setMazeId(-1);
 		tempCell.setXPos(-1);
 		tempCell.setYPos(-1);
@@ -142,51 +120,121 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 		vectorOfCells.push_back(tempCell);
 	}
 
-	//Once empty maze is made, generate inner walls with binary tree
-
 	vectorOfCells = binaryTree(vectorOfCells);
+	for (int i = 0; i < vectorOfCells.size(); i++) {
+		currentTile = (vectorOfCells.at(i).getCurrentChar() == '.' ? 'X' :vectorOfCells.at(i).getCurrentChar());
+		vectorOfCells.at(i).setCurrentChar(currentTile);
+	}
 
 	return vectorOfCells;
 }
 
 std::vector<Cell> MazeCreator::binaryTree(std::vector<Cell> cellVector) {
-	std::vector<Cell>::iterator cellIt;
-	std::vector<Cell> tempCells = cellVector;
-	std::vector<Cell> cellMaze;
+	
+	std::vector<int> visitedCells;
+	int found = 0;//if exit is found will be equal to numExits
+	int centerPointId = -1;//Where the S is;
+	for (int i = 0; i < cellVector.size(); i++) {
+		centerPointId = 200/*(cellVector.at(i).getCurrentChar() == 'S' ? cellVector.at(i).getMazeId():centerPointId)*/;
+	}
+	visitedCells.push_back(centerPointId);//start point
+	int currentTileId = centerPointId;
+	int direction; // 0 is N, 1 is E, 2 is S, 3 is W
+	int addedToCurrnetId=0;
+	int pathCounter=0;
+	bool visited = false;
+	int failsafe = 0;
+	//untill exit is found
+	while (found<numExits &&failsafe<1000) {
+		
+		pathCounter = 0;
+		
+		//Chooses a random direction and finds what that tile's ID would be.
+		do {
+			direction =RNG(3);
+			addedToCurrnetId = (direction == 0 ? -mapSize: addedToCurrnetId);
+			addedToCurrnetId = (direction == 1 ? 1 : addedToCurrnetId);
+			addedToCurrnetId = (direction == 2 ? +mapSize : addedToCurrnetId);
+			addedToCurrnetId = (direction == 3 ? -1 : addedToCurrnetId);
+			pathCounter++;//checks if deadEnd
+			//West by default
+			visited = false;
+			//Checks if the direction the cell wants to go is a wall or was already checked.
+			for (int i = 0; i < visitedCells.size(); i++) {
+				visited = (addedToCurrnetId + currentTileId < 0 || addedToCurrnetId + currentTileId>cellVector.size() ? true : visited);
+				visited = (visited == true ||visitedCells.at(i) == currentTileId + addedToCurrnetId? true : visited);
+				if (visited != true) {
+					visited = (cellVector.at(currentTileId + addedToCurrnetId).getCurrentChar() == 'X' ? true : visited);
+				}
+				//std::cout << visited << '\n';
+				
 
-
-	//while (!tempCells.empty()) {
-
-
-
-	//}
-
-
-	for (cellIt = cellVector.begin(); cellIt != cellVector.end();cellIt++) {
-		int newWallId;
-		int directionRand;
-		if (!cellIt->getConnections().empty()) {
-			//newWallId = cellVector.at(RNG(cellIt->getConnections().size())).getMazeId();
-			//newWallId = 5;
-			directionRand = RNG(cellIt->getConnections().size());
-			newWallId = cellVector.at(directionRand).getMazeId();
-			if (cellVector.at(newWallId).getCurrentChar() != 'X') {
-				cellVector.at(newWallId).setCurrentChar('X');
 			}
+			if (pathCounter == 10) {
+			/*
+				
+				while (visited) {
+					direction = RNG(3);
+					addedToCurrnetId = (direction == 0 ? -mapSize : addedToCurrnetId);
+					addedToCurrnetId = (direction == 1 ? 1 : addedToCurrnetId);
+					addedToCurrnetId = (direction == 2 ? +mapSize : addedToCurrnetId);
+					addedToCurrnetId = (direction == 3 ? -1 : addedToCurrnetId);
+					if (addedToCurrnetId + currentTileId > 0 || addedToCurrnetId + currentTileId < cellVector.size()) {
+						if (cellVector.at(addedToCurrnetId + currentTileId).getCurrentChar() != 'X') {
+							visited = false;
+						}
 
+					}
+				
+				}
+				*/
+
+				currentTileId = visitedCells.at(visitedCells.size()-1);
+				addedToCurrnetId = 0;
+				visited = false;
+
+				if (currentTileId == centerPointId) {
+					visitedCells.clear();
+				}
+				//isited = false;
+			
+			}
+			
+		} while (visited);//10 is the breakout, in that case the backtracking will start
+		
+		if (pathCounter<10) {
+			currentTileId += addedToCurrnetId;
+			visitedCells.push_back(currentTileId);
+			
+			cellVector.at(currentTileId).setCurrentChar(' ');
+
+			
+			bool foundChecker = false;
+			foundChecker = (cellVector.at(currentTileId - 1).getCurrentChar() == 'E' ? true : foundChecker);
+			foundChecker = (cellVector.at(currentTileId + 1).getCurrentChar() == 'E' ? true: foundChecker);
+			foundChecker = (cellVector.at(currentTileId - mapSize).getCurrentChar() == 'E' ? true : foundChecker);
+			foundChecker = (cellVector.at(currentTileId + mapSize).getCurrentChar() == 'E' ? true : foundChecker);
+			found = (foundChecker ? found + 1 : found);
+			//if (foundChecker) {
+				//currentTileId = centerPointId;
+			//}
 		}
-		//if (cellIt->getCurrentChar() == '.') {
 
+		
+		//cellVector.at(currentTileId).setCurrentChar('p');
+		failsafe++;
+		
 
-		//}
-
+		
+		
+		
+		
 
 
 	}
 
 
-
-
+	std::cout << failsafe;
 
 	return cellVector;
 }
