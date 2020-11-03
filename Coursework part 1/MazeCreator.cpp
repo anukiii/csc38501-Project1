@@ -117,17 +117,15 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 
 
 			
-			if (x > 0 && currentTile =='.' && x%2 ==1) {
+			if (x%2==1&&x > 0 && (currentTile == '.'|| currentTile == ' '|| currentTile == 'S')) {
 				tempCell.addConnection(idCounter-1);//block to the left
 				tempCell.addConnection(idCounter + 1);
 			}
-			/*
-			if (y > 0 && currentTile == '.'&& y% 2 ==1) {
+			
+			if (y %2 ==1 &&y > 0 && (currentTile == '.' || currentTile == ' ' || currentTile == 'S')) {
 				tempCell.addConnection(idCounter - mapSize); ///one row up
 				tempCell.addConnection(idCounter + mapSize);
-			}*/
-
-			
+			}
 
 			//currentTile = (RNG(2) == 1 && currentTile == '.' ? ' ' : currentTile);
 			//currentTile = (currentTile == '.' ? 'X' : currentTile);
@@ -152,23 +150,11 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 }
 
 std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector) {
-
+	char tempChar;
 	for (int i = 0; i < cellVector.size(); i++) {
-		if (!cellVector.at(i).getConnections().empty()) {
-			cellVector.at(i).setCurrentChar('-'); //These are possile paths
-		}
+		tempChar = (!cellVector.at(i).getConnections().empty() && cellVector.at(i).getCurrentChar() == '.' ? '|' : cellVector.at(i).getCurrentChar());
+		cellVector.at(i).setCurrentChar(tempChar);
 	}
-	int found = 0;
-	int centerPoint = (mapSize * mapSize) / 2;
-	int currentCell = centerPoint;
-
-	while (found < numExits) {
-
-
-
-
-	}
-	
 
 
 
