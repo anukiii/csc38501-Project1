@@ -1,5 +1,5 @@
 #pragma once
-#include<list>
+#include<vector>
 #include<string>
 #include "Cell.h"
 class MazeCreator
@@ -10,13 +10,13 @@ private:
 	std::string fileName;
 
 	int RNG(int range); // generates a random number between 0 and range
-	std::list<int> allocateExits(int numExits, std::list<int> exitList);
-	std::list<Cell> drawMap(std::list<int> exitPos);
-	void drawToFile(std::list<Cell> cellList);
+	std::vector<int> allocateExits(int numExits, std::vector<int> exitvector);
+	std::vector<Cell> drawMap(std::vector<int> exitPos);
+	void drawToFile(std::vector<Cell> cellvector);
 	
-	void printOnScreen(std::list<Cell> cellList);
+	void printOnScreen(std::vector<Cell> cellvector);
 public:
-	int generateMap(int mapSize, int numExits);//creates and populates maze file
+	void generateMap(int mapSize, int numExits);//creates and populates maze file
 	void setInputMapSize();//gets user input for map size in tiles
 	void setInputNumExits();//gets user input for number of exits
 	void setInputFileName(); //asks user what name they want to save the file
@@ -24,6 +24,7 @@ public:
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
 	void readFromFile();
+	std::vector<Cell> BinaryTree(std::vector<Cell>);
 
 
 };

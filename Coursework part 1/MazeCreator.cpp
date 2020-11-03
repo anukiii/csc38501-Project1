@@ -2,22 +2,22 @@
 #include <fstream>
 #include "MazeCreator.h"
 #include <random>
-#include <list>
+#include <vector>
 #include "Cell.h"
 
-int MazeCreator::generateMap(int mapSize, int numExits) {
+void MazeCreator::generateMap(int mapSize, int numExits) {
 
-	std::list<int> exitPos;
+	std::vector<int> exitPos;
 	while ((int)exitPos.size() < numExits) {
 		exitPos = allocateExits(numExits,exitPos);
-		exitPos.size();
+		//exitPos.size();
 		//breakout statement??
 	}
 
 	std::cout << '\n';
 
-	std::list<Cell> cellList = drawMap(exitPos);
-	printOnScreen(cellList);
+	std::vector<Cell> cellvector = drawMap(exitPos);
+	printOnScreen(cellvector);
 	int choice;
 	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
 	std::cin >> choice;
@@ -30,7 +30,7 @@ int MazeCreator::generateMap(int mapSize, int numExits) {
 	}
 	switch (choice) {
 	case 1:
-		drawToFile(cellList);
+		drawToFile(cellvector);
 		break;
 	case 2:
 		startMenu();
@@ -40,44 +40,54 @@ int MazeCreator::generateMap(int mapSize, int numExits) {
 		break;
 
 	}
+ }
 
-
-
-
-
-
-	return 0;
-}
-
-std::list<int> MazeCreator::allocateExits(int numExits, std::list<int> exitPos) {
+std::vector<int> MazeCreator::allocateExits(int numExits, std::vector<int> exitPos) {
 	for (int i = 0; i < numExits; i++) {
 		exitPos.push_back(RNG(mapSize * 4)); // chooses possible exits	
 	}
-	exitPos.unique(); //removes duplicates
+	//exitPos.; //removes duplicates
+	int tempExit;
+	int duplicates=0;
+	for (int i = 0; i < exitPos.size(); i++) {
+		tempExit = exitPos.at(i);
+		for (int j = i + 1; j < exitPos.size(); j++) {
+			duplicates = (tempExit == exitPos.at(j) ? duplicates + 1 : duplicates);
+		}
+	}
+	
+	if (duplicates > 0) {
+		exitPos.clear(); //Duplicate has been found thus we must re-do;
+	}
+
+
 	return exitPos;
 }
 
-void MazeCreator::printOnScreen(std::list<Cell> cellList) {
-	std::list<Cell>::iterator it;
-	for (it = cellList.begin(); it != cellList.end(); it++) {
+void MazeCreator::printOnScreen(std::vector<Cell> cellvector) {
+	std::vector<Cell>::iterator it;
+	for (it = cellvector.begin(); it != cellvector.end(); it++) {
 		std::cout << it->getCurrentChar();
 	}
 }
 
-std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
-	std::list<Cell> listOfCells;
+std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
+	std::vector<Cell> vectorOfCells;
 	Cell tempCell;
 	int idCounter = 0;
 	char currentTile;
 	int wallExitCounter =0;
-	std::list<int>::iterator exitIt;
-	for (int y = 0; y < mapSize; y++) {//Y choord
-		for (int x = 0; x < mapSize; x++) {//X choord
+	std::vector<int>::iterator exitIt;
+
+	for (int y = 0; y < mapSize; y++) {//Y co-ord
+		for (int x = 0; x < mapSize; x++) {//X co-ord
 			idCounter++;
 			tempCell.setMazeId(idCounter);
 			tempCell.setXPos(x);
 			tempCell.setYPos(y);
-			currentTile = 'p'; //default for tile;
+			currentTile = '.'; //default for tile in board;
+
+			
 
 
 			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank			
@@ -94,26 +104,85 @@ std::list<Cell> MazeCreator::drawMap(std::list<int> exitPos) {
 
 			//Exits
 			wallExitCounter = (currentTile == 'X' ? wallExitCounter + 1 : wallExitCounter);
-			//Iterates through list of Exits
+			//Iterates through vector of Exits
 			for (exitIt = exitPos.begin(); exitIt != exitPos.end(); exitIt++) {
 				currentTile = (*exitIt == wallExitCounter ? 'E' : currentTile);
 				*exitIt = (*exitIt == wallExitCounter ? -1 : *exitIt);//Sets it to -1 so it isn't checked again
 			}
 			
+
+			//all the rest, generation alg is applied
+			
+			if (currentTile == '.') {
+				
+			}
+
+
+			/*
+			if (x > 0) {
+				tempCell.addConnection(idCounter-1);//block to the left
+			}
+			if (y > 0) {
+				tempCell.addConnection(idCounter - mapSize); ///one row up
+			}
+
+			cellIt = vectorOfCells.begin();
+			std::advance(vectorOfCells, RNG(tempCell.getConnections().size()));
+
+			//currentTile = (RNG(2) == 1 && currentTile == '.' ? ' ' : currentTile);
+			//currentTile = (currentTile == '.' ? 'X' : currentTile);
+			*/
 			tempCell.setCurrentChar(currentTile);
 
-			listOfCells.push_back(tempCell);
+			vectorOfCells.push_back(tempCell);
 		}
 		tempCell.setMazeId(-1);
 		tempCell.setXPos(-1);
 		tempCell.setYPos(-1);
 		tempCell.setCurrentChar('\n');
-		listOfCells.push_back(tempCell);
+		vectorOfCells.push_back(tempCell);
+	}
+
+	//Once empty maze is made, generate inner walls with binary tree
+
+
+
+	return vectorOfCells;
+}
+
+std::vector<Cell> MazeCreator::BinaryTree(std::vector<Cell> cellvector) {
+	std::vector<Cell>::iterator cellIt;
+	std::vector<Cell> tempCells = cellvector;
+	std::vector<Cell> cellMaze;
+
+
+	while (!tempCells.empty()) {
+		cellIt = tempCells.begin();
+		std::advance(cellIt, RNG(tempCells.size()));
+		//cellMaze.push_back(cellIt)
 	}
 
 
-	return listOfCells;
+	for (cellIt = cellvector.begin(); cellIt != cellvector.end(); cellIt++) {
+		
+		//if (cellIt->getCurrentChar() == '.') {
+
+
+		//}
+
+
+
+	}
+
+
+
+
+
+	return cellvector;
 }
+
+
+
 
 //Random number Generation --
 int MazeCreator::RNG(int range) {
@@ -139,14 +208,13 @@ void MazeCreator::setInputMapSize()
 			std::cin >> mapSize;
 		}
 
-		//return mapSize;
+
 
 	;
 }
 
 void MazeCreator::setInputNumExits()
 {
-	//do {
 		std::cout << "Choose number of Exits : ";
 		std::cin >> numExits;
 
@@ -158,7 +226,6 @@ void MazeCreator::setInputNumExits()
 		}
 
 
-//	}while
 }
 
 
@@ -168,7 +235,7 @@ void MazeCreator::setInputFileName()
 	std::cin.get();
 	std::getline(std::cin, fileName);
 	fileName += ".txt";//saves it as a text file
-	//std::cout << "File will be saved as " << fileName << ".txt" << '\n\n';
+
 
 }
 
@@ -183,12 +250,12 @@ int MazeCreator::getNumExits() {
 	return numExits;
 }
 
-void MazeCreator::drawToFile(std::list<Cell> cellList)
+void MazeCreator::drawToFile(std::vector<Cell> cellvector)
 {
 	setInputFileName();
 	std::ofstream file(fileName);
-	std::list<Cell>::iterator it;
-	for (it = cellList.begin(); it != cellList.end();it++) {
+	std::vector<Cell>::iterator it;
+	for (it = cellvector.begin(); it != cellvector.end();it++) {
 		file << it->getCurrentChar();
 	}
 	file.close();
