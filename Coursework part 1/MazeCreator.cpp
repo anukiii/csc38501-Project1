@@ -16,8 +16,8 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 
 	std::cout << '\n';
 
-	std::vector<Cell> cellvector = drawMap(exitPos);
-	printOnScreen(cellvector);
+	std::vector<Cell> cellVector = drawMap(exitPos);
+	printOnScreen(cellVector);
 	int choice;
 	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
 	std::cin >> choice;
@@ -30,7 +30,7 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	}
 	switch (choice) {
 	case 1:
-		drawToFile(cellvector);
+		drawToFile(cellVector);
 		break;
 	case 2:
 		startMenu();
@@ -64,9 +64,9 @@ std::vector<int> MazeCreator::allocateExits(int numExits, std::vector<int> exitP
 	return exitPos;
 }
 
-void MazeCreator::printOnScreen(std::vector<Cell> cellvector) {
+void MazeCreator::printOnScreen(std::vector<Cell> cellVector) {
 	std::vector<Cell>::iterator it;
-	for (it = cellvector.begin(); it != cellvector.end(); it++) {
+	for (it = cellVector.begin(); it != cellVector.end(); it++) {
 		std::cout << it->getCurrentChar();
 	}
 }
@@ -113,29 +113,28 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 
 			//all the rest, generation alg is applied
 			
-			if (currentTile == '.') {
-				
-			}
 
 
-			/*
-			if (x > 0) {
+
+			
+			if (x > 0 && currentTile =='.') {
 				tempCell.addConnection(idCounter-1);//block to the left
 			}
-			if (y > 0) {
+			if (y > 0 && currentTile == '.') {
 				tempCell.addConnection(idCounter - mapSize); ///one row up
 			}
 
-			cellIt = vectorOfCells.begin();
-			std::advance(vectorOfCells, RNG(tempCell.getConnections().size()));
+			
 
 			//currentTile = (RNG(2) == 1 && currentTile == '.' ? ' ' : currentTile);
 			//currentTile = (currentTile == '.' ? 'X' : currentTile);
-			*/
+			
 			tempCell.setCurrentChar(currentTile);
 
 			vectorOfCells.push_back(tempCell);
+			tempCell.clearConnections();
 		}
+		idCounter--; //ignores walls
 		tempCell.setMazeId(-1);
 		tempCell.setXPos(-1);
 		tempCell.setYPos(-1);
@@ -145,26 +144,37 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 
 	//Once empty maze is made, generate inner walls with binary tree
 
-
+	vectorOfCells = binaryTree(vectorOfCells);
 
 	return vectorOfCells;
 }
 
-std::vector<Cell> MazeCreator::BinaryTree(std::vector<Cell> cellvector) {
+std::vector<Cell> MazeCreator::binaryTree(std::vector<Cell> cellVector) {
 	std::vector<Cell>::iterator cellIt;
-	std::vector<Cell> tempCells = cellvector;
+	std::vector<Cell> tempCells = cellVector;
 	std::vector<Cell> cellMaze;
 
 
-	while (!tempCells.empty()) {
-		cellIt = tempCells.begin();
-		std::advance(cellIt, RNG(tempCells.size()));
-		//cellMaze.push_back(cellIt)
-	}
+	//while (!tempCells.empty()) {
 
 
-	for (cellIt = cellvector.begin(); cellIt != cellvector.end(); cellIt++) {
-		
+
+	//}
+
+
+	for (cellIt = cellVector.begin(); cellIt != cellVector.end();cellIt++) {
+		int newWallId;
+		int directionRand;
+		if (!cellIt->getConnections().empty()) {
+			//newWallId = cellVector.at(RNG(cellIt->getConnections().size())).getMazeId();
+			//newWallId = 5;
+			directionRand = RNG(cellIt->getConnections().size());
+			newWallId = cellVector.at(directionRand).getMazeId();
+			if (cellVector.at(newWallId).getCurrentChar() != 'X') {
+				cellVector.at(newWallId).setCurrentChar('X');
+			}
+
+		}
 		//if (cellIt->getCurrentChar() == '.') {
 
 
@@ -178,7 +188,7 @@ std::vector<Cell> MazeCreator::BinaryTree(std::vector<Cell> cellvector) {
 
 
 
-	return cellvector;
+	return cellVector;
 }
 
 
@@ -250,12 +260,12 @@ int MazeCreator::getNumExits() {
 	return numExits;
 }
 
-void MazeCreator::drawToFile(std::vector<Cell> cellvector)
+void MazeCreator::drawToFile(std::vector<Cell> cellVector)
 {
 	setInputFileName();
 	std::ofstream file(fileName);
 	std::vector<Cell>::iterator it;
-	for (it = cellvector.begin(); it != cellvector.end();it++) {
+	for (it = cellVector.begin(); it != cellVector.end();it++) {
 		file << it->getCurrentChar();
 	}
 	file.close();

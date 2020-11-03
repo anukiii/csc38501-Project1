@@ -24,7 +24,7 @@ public:
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
 	void readFromFile();
-	std::vector<Cell> BinaryTree(std::vector<Cell>);
+	std::vector<Cell> binaryTree(std::vector<Cell>);
 
 
 };

@@ -1,5 +1,5 @@
 #include "Cell.h"
-#include <list>;
+#include <vector>;
 
 int Cell::getXpos() {
 	return xPos;
@@ -13,7 +13,7 @@ int Cell::getMazeId() {
 	return mazeId;
 }
 
-std::list<int> Cell::getConnections() {
+std::vector<int> Cell::getConnections() {
 	return connections;
 }
 
@@ -46,4 +46,8 @@ void Cell::addConnection(int newConnection)
 {
 	connections.push_back(newConnection);
 
+}
+
+void Cell::clearConnections() {
+	connections.clear();
 }
