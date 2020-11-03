@@ -134,7 +134,6 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 			vectorOfCells.push_back(tempCell);
 			tempCell.clearConnections();
 		}
-		idCounter--; //ignores walls
 		tempCell.setMazeId(-1);
 		tempCell.setXPos(-1);
 		tempCell.setYPos(-1);
@@ -144,46 +143,12 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 
 	//Once empty maze is made, generate inner walls with binary tree
 
-	vectorOfCells = binaryTree(vectorOfCells);
+	vectorOfCells = mazingAlg(vectorOfCells);
 
 	return vectorOfCells;
 }
 
-std::vector<Cell> MazeCreator::binaryTree(std::vector<Cell> cellVector) {
-	std::vector<Cell>::iterator cellIt;
-	std::vector<Cell> tempCells = cellVector;
-	std::vector<Cell> cellMaze;
-
-
-	//while (!tempCells.empty()) {
-
-
-
-	//}
-
-
-	for (cellIt = cellVector.begin(); cellIt != cellVector.end();cellIt++) {
-		int newWallId;
-		int directionRand;
-		if (!cellIt->getConnections().empty()) {
-			//newWallId = cellVector.at(RNG(cellIt->getConnections().size())).getMazeId();
-			//newWallId = 5;
-			directionRand = RNG(cellIt->getConnections().size());
-			newWallId = cellVector.at(directionRand).getMazeId();
-			if (cellVector.at(newWallId).getCurrentChar() != 'X') {
-				cellVector.at(newWallId).setCurrentChar('X');
-			}
-
-		}
-		//if (cellIt->getCurrentChar() == '.') {
-
-
-		//}
-
-
-
-	}
-
+std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector) {
 
 
 
