@@ -179,17 +179,18 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 	int tempId;
 	bool valid;
 	bool backtrack;
-	int tries = 0;;
+	int tries = 0;
+	int totalRuns =0;
 	path.push_back(centerPoint);
 
 	do {
-
+		totalRuns++;
 		valid = false;
 		tries = 0;
 		while (tries < 10 && !valid) {
 			backtrack = true;
 			tries++;
-			direction = RNG(1);
+			direction = RNG(3);
 
 
 			switch (direction) {
@@ -238,7 +239,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 			case 1: //down +mapsize twice
 				
 				tempId = currentId + (mapSize + 1);
-				if (tempId > mapSize*mapSize) {
+				if (tempId > mapSize*mapSize+mapSize) {
 					break;
 				}
 				else if (cellVector.at(tempId).getCurrentChar() == 'X'|| cellVector.at(tempId).getCurrentChar() == 'p') {
@@ -273,194 +274,100 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					valid = true;
 
 				}
-				
-
-
-
-
-
 
 				break;
 
 			case 2: //left -1 twice
+				
+				tempId = currentId - 1;
+				if (tempId < 0) {
+					break;
+				}
+				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+					break;
+				}
+				else {
+					//currentId = tempId;
+					cellVector.at(currentId -1).setCurrentChar('p');
+				}
+
+
+				tempId -=1;
+				if (tempId < 0) {
+					break;
+				}
+				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+					break;
+				}
+				else {
+
+					for (int i = 0; i < path.size(); i++) {
+						backtrack = (path.at(i) == tempId ? false : backtrack);
+
+					}
+					std::cout << backtrack << '\n';
+				}
+				if (backtrack) {
+					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
+					cellVector.at(currentId - 2).setCurrentChar('p');
+					currentId = tempId;
+					path.push_back(currentId);
+					valid = true;
+
+				}
+				
 				break;
 
 			case 3://right +1 twice
+				tempId = currentId + 1;
+				if (tempId >mapSize *mapSize +mapSize) {
+					break;
+				}
+				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+					break;
+				}
+				else {
+					//currentId = tempId;
+					cellVector.at(currentId + 1).setCurrentChar('p');
+				}
+
+
+				tempId += 1;
+				if (tempId > mapSize*mapSize+mapSize) {
+					break;
+				}
+				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+					break;
+				}
+				else {
+
+					for (int i = 0; i < path.size(); i++) {
+						backtrack = (path.at(i) == tempId ? false : backtrack);
+
+					}
+					std::cout << backtrack << '\n';
+				}
+				if (backtrack) {
+					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
+					cellVector.at(currentId +2).setCurrentChar('p');
+					currentId = tempId;
+					path.push_back(currentId);
+					valid = true;
+
+				}
+
+
+
 				break;
 			}
 		}
 		if (!valid && !path.empty()) {
 			currentId = path.at(path.size() - 1);
 			path.pop_back();
-			std::cout << "Pussy talented it do cartwheels: " << path.size() << '\n';
-
 		}
 
 
-	} while (currentId != centerPoint);
-
-
-
-	/*
-	char tempChar;
-	std::vector<int> exitIds;
-	std::vector<int> wallIds;
-	std::vector<int>path;
-
-	int currentId;
-	int startId = 0;//for recursive backtracking
-	//int found = 0; //used to exit if exit found.
-
-	
-
-	
-	for (int i = 0; i < cellVector.size(); i++) {
-		tempChar = (!cellVector.at(i).getConnections().empty() && cellVector.at(i).getCurrentChar() == '.' ? '|' : cellVector.at(i).getCurrentChar());
-		cellVector.at(i).setCurrentChar(tempChar);
-		if (cellVector.at(i).getCurrentChar() == 'E') {
-			exitIds.push_back(cellVector.at(i).getMazeId()); // used for checking exits later
-		}
-		else if (cellVector.at(i).getCurrentChar() == 'X') {
-			wallIds.push_back(cellVector.at(i).getMazeId());
-		}
-		else if (cellVector.at(i).getCurrentChar() == 'S') {
-			startId = cellVector.at(i).getMazeId();
-			
-			//std::cout << i << ' ' << currentId << ' ' << cellVector.at(i).getConnections().size();
-		}
-	}
-	
-	currentId = startId;
-	int tries;
-	int numConnections;
-	int tempId;
-	int direction;
-	bool found;
-	int halfstep;
-	//while (found < numExits) {
-	/*
-	do {
-		tries = 0;//reset treis
-		found = true;
-		
-		
-		//if (cellVector.at(currentId).getConnections().empty()) {
-			
-		
-		
-		do {
-			tries++;
-			numConnections = cellVector.at(currentId).getConnections().size();
-
-			direction = RNG(numConnections-1); //since RNG starts form 0
-			std::cout << cellVector.at(currentId).getConnections().size()<<' '<<direction << '\n';
-			tempId = cellVector.at(currentId).getConnections().at(direction);
-			//halfstep = (tempId-currentId) / 2;
-			
-			//for (int i = 0; i < 2; i++) {
-				//currentId += halfstep;
-			
-			for (int i = 0; i < path.size(); i++) {
-				if (path.at(i) == tempId) {
-					found = false;
-				}
-			}
-
-			if (cellVector.at(tempId).getCurrentChar() == 'X') {
-				found = false;
-				}
-			//}
-			//options are +2, -2, +mapsize*2 -mapsize*2
-			std::cout << found << '\n';
-		} while (tries < 10 && !found);
-
-
-			if (tries == 10 && !path.empty()) {
-				currentId = path.at(path.size() - 1);
-				path.pop_back();
-				std::cout << "no path found"<<'\n';
-			}
-			else if (found) {
-				currentId = tempId;
-				cellVector.at(currentId).setCurrentChar('p');
-				path.push_back(currentId);
-				std::cout << "path found"<<'\n';
-			}
-
-
-		
-
-
-	} while (currentId != startId);
-		*/
-		
-		/*
-
-
-		switch (direction)
-		{
-		case 0 : //go North
-			if (currentId - mapSize > 0) {
-				if (cellVector.at(currentId - mapSize).getCurrentChar() != 'X') {
-					if (cellVector.at(currentId - mapSize).getCurrentChar() == 'E') {
-						found++;
-					}
-					else {
-						currentId += mapSize;
-						cellVector.at(currentId).setCurrentChar('p');
-					}
-				}
-				else {
-					//currentId = path.at(path.size() - 1);
-					//path.pop_back();
-				}
-			}
-			else {
-				//currentId = path.at(path.size() - 1);
-				//path.pop_back();
-			}
-			if (currentId - mapSize*2 > 0) {
-				if (cellVector.at(currentId - mapSize*2).getCurrentChar() != 'X') {
-					if (cellVector.at(currentId - mapSize*2).getCurrentChar() == 'E') {
-						found++;
-
-					}
-					else {
-						cellVector.at(currentId).setCurrentChar('p');
-					}
-				}
-				else {
-					currentId = path.at(path.size() - 1);
-					path.pop_back();
-				}
-			}
-			else {
-				currentId = path.at(path.size() - 1);
-				path.pop_back();
-			}
-		
-
-
-			break;
-		}
-		//up
-
-		//down
-
-		//left
-
-		//right
-
-		}
-		*/
-
-	
-
-	
-
-
-
-
+	} while (totalRuns < mapSize*mapSize/5);
 
 	return cellVector;
 }
