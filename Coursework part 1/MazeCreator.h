@@ -10,10 +10,9 @@ private:
 	std::string fileName;
 
 	int RNG(int range); // generates a random number between 0 and range
-	std::vector<int> allocateExits(int numExits, std::vector<int> exitvector);
-	std::vector<Cell> drawMap(std::vector<int> exitPos);
+	std::vector<Cell> drawMap();
 	void drawToFile(std::vector<Cell> cellvector);
-	
+	std::vector<Cell> mapFixer(std::vector<Cell> vectorOfCells, int centerPoint);
 	void printOnScreen(std::vector<Cell> cellvector);
 public:
 	void generateMap(int mapSize, int numExits);//creates and populates maze file
@@ -24,7 +23,9 @@ public:
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
 	void readFromFile();
-	std::vector<Cell> mazingAlg(std::vector<Cell>cellVector, int centerPoint);
+	std::vector<Cell> pathfinding(std::vector <Cell> vectorOfCells, int centerPoint);
+	std::vector<Cell> mazingAlg(std::vector<Cell>vectorOFCells, int centerPoint);
+
 
 };
 

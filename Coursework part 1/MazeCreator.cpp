@@ -7,16 +7,9 @@
 
 void MazeCreator::generateMap(int mapSize, int numExits) {
 
-	std::vector<int> exitPos;
-	while ((int)exitPos.size() < numExits) {
-		exitPos = allocateExits(numExits,exitPos);
-		//exitPos.size();
-		//breakout statement??
-	}
-
 	std::cout << '\n';
 
-	std::vector<Cell> cellVector = drawMap(exitPos);
+	std::vector<Cell> cellVector = drawMap();
 	printOnScreen(cellVector);
 	int choice;
 	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\n3:Exit\n";
@@ -42,27 +35,6 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	}
  }
 
-std::vector<int> MazeCreator::allocateExits(int numExits, std::vector<int> exitPos) {
-	for (int i = 0; i < numExits; i++) {
-		exitPos.push_back(RNG(mapSize * 4)); // chooses possible exits	
-	}
-	//exitPos.; //removes duplicates
-	int tempExit;
-	int duplicates=0;
-	for (int i = 0; i < exitPos.size(); i++) {
-		tempExit = exitPos.at(i);
-		for (int j = i + 1; j < exitPos.size(); j++) {
-			duplicates = (tempExit == exitPos.at(j) ? duplicates + 1 : duplicates);
-		}
-	}
-	
-	if (duplicates > 0) {
-		exitPos.clear(); //Duplicate has been found thus we must re-do;
-	}
-
-
-	return exitPos;
-}
 
 void MazeCreator::printOnScreen(std::vector<Cell> cellVector) {
 	std::vector<Cell>::iterator it;
@@ -71,14 +43,11 @@ void MazeCreator::printOnScreen(std::vector<Cell> cellVector) {
 	}
 }
 
-std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
+std::vector<Cell> MazeCreator::drawMap() {
 	std::vector<Cell> vectorOfCells;
 	Cell tempCell;
 	int idCounter = -1; //So first id is 0;
 	char currentTile;
-	int wallExitCounter =0;
-	std::vector<int>::iterator exitIt;
-	int modValue = mapSize%2;
 	int centerPoint = 0;
 
 	for (int y = 0; y < mapSize; y++) {//Y co-ord
@@ -113,13 +82,155 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 
 	//Once empty maze is made, generate maze using a modified recursive backtracking alg.
 	vectorOfCells = mazingAlg(vectorOfCells,centerPoint);
+	vectorOfCells = mapFixer(vectorOfCells,centerPoint);
+	vectorOfCells = pathfinding(vectorOfCells, centerPoint);
 
+
+
+
+	return vectorOfCells;
+}
+
+
+std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int centerpoint) {
+
+	std::vector<int> exitPos;
+	for (int i = 0; i < vectorOfCells.size(); i++) {
+		if (vectorOfCells.at(i).getCurrentChar() == 'E') {
+			exitPos.push_back(i);
+		}
+	}
+	
+	int failsafe = 0;
+	int currentId;
+	int currentY;
+	int currentX;
+	int destinationX = vectorOfCells.at(centerpoint).getXpos();
+	int destinationY = vectorOfCells.at(centerpoint).getYpos();
+	int currentDistance;
+	int direction;
+	int tries;
+	int tempId;
+	bool valid;
+	bool best ;
+	std::vector<int> path;
+	for (int i = 0; i < exitPos.size(); i++) {
+		currentId = exitPos.at(i);
+		currentX =vectorOfCells.at(currentId).getXpos();
+		currentY = vectorOfCells.at(currentId).getYpos();
+		currentDistance = abs(currentX-destinationX) + abs(currentY-destinationY);
+		path.push_back(currentId);
+		while (currentDistance  > 1 && failsafe<1000) {
+			failsafe++;
+			std::cout << currentDistance<<' '<<currentId << '\n';
+			tries = 0;
+			best = false;
+			direction =RNG(3);
+			while (tries < 10 && !best) {
+				//currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
+				direction = RNG(3);
+				tries++;
+				valid = false;
+				
+				switch (direction) {
+				case 0://up
+					tempId = currentId - (mapSize+1);
+					if (tempId<0) {
+						break;
+					}
+					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+						break;
+					}
+					valid = true;
+					break;
+				case 1://down
+					tempId = currentId + mapSize+1;
+					if (tempId > mapSize * mapSize) {
+						break;
+					}
+					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+						break;
+					}
+					valid = true;
+					break;
+				case 2://left
+					tempId = currentId -1;
+					if (tempId<0) {
+						break;
+					}
+					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+						break;
+					}
+					valid = true;
+					break;
+				case 3://right
+					tempId = currentId +1;
+					if (tempId > mapSize * mapSize) {
+						break;
+					}
+					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+						break;
+					}
+					valid = true;
+					break;
+				}
+
+				if (valid && currentDistance > abs(destinationX - vectorOfCells.at(tempId).getXpos()) + abs(destinationY - vectorOfCells.at(tempId).getYpos())) {
+					std::cout << "best Found\n";
+					currentId = tempId;
+					path.push_back(currentId);
+					currentX = vectorOfCells.at(currentId).getXpos();
+					currentY = vectorOfCells.at(currentId).getYpos();
+					currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
+					vectorOfCells.at(currentId).setCurrentChar('O');
+					best = true;
+				}
+
+
+			}
+			if (!best &&!path.empty()) {
+				std::cout << "go Back\n";
+				currentId = path.at(path.size() - 1);
+				path.pop_back();
+				currentX = vectorOfCells.at(currentId).getXpos();
+				currentY = vectorOfCells.at(currentId).getYpos();
+				currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
+
+			}
+
+
+
+
+
+
+
+
+
+			//currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
+		}
+
+
+
+
+
+
+	}
+
+
+
+	return vectorOfCells;
+}
+
+
+
+std::vector<Cell> MazeCreator::mapFixer(std::vector<Cell> vectorOfCells, int centerPoint) {
+	char currentTile;
 	//replace p withh blanks and . with walls, put in s and space around it
 	for (int i = 0; i < vectorOfCells.size(); i++) {
 		currentTile = '\n';
 
-		
-		
+
+
 
 		currentTile = (vectorOfCells.at(i).getCurrentChar() == 'p' ? ' ' : currentTile);
 		currentTile = (vectorOfCells.at(i).getCurrentChar() == '.' ? 'X' : currentTile);
@@ -133,9 +244,10 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 		currentTile = (vectorOfCells.at(i).getMazeId() == centerPoint ? 'S' : currentTile);
 		vectorOfCells.at(i).setCurrentChar(currentTile);
 	}
-
 	return vectorOfCells;
 }
+
+
 
 //Method isn't great and is very long. can't find a way to split it into subfunctions but works at the moment.
 //If time allows, I'll try optimize this function better also uses a lot of if statememnts for checking, idk how to change this
@@ -203,7 +315,6 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 						
 					}
 				if (backtrack) {
-					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId - (mapSize+1) * 2).setCurrentChar('p');
 					currentId = tempId;
 					path.push_back(currentId);
@@ -231,7 +342,6 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					}
 					break;
 				}
-					//currentId = tempId;
 					cellVector.at(currentId + (mapSize + 1)).setCurrentChar('p');
 
 
@@ -254,10 +364,8 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 						backtrack = (path.at(i) == tempId ? false : backtrack);
 
 					}
-					std::cout << backtrack << '\n';
 
 				if (backtrack) {
-					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId + (mapSize + 1) * 2).setCurrentChar('p');
 					currentId = tempId;
 					path.push_back(currentId);
@@ -284,7 +392,6 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					break;
 				}
 
-					//currentId = tempId;
 					cellVector.at(currentId -1).setCurrentChar('p');
 				
 
@@ -308,10 +415,8 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 						backtrack = (path.at(i) == tempId ? false : backtrack);
 
 					}
-					std::cout << backtrack << '\n';
 				
 				if (backtrack) {
-					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId - 2).setCurrentChar('p');
 					currentId = tempId;
 					path.push_back(currentId);
@@ -337,7 +442,6 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					break;
 				}
 
-					//currentId = tempId;
 					cellVector.at(currentId + 1).setCurrentChar('p');
 				
 
@@ -362,10 +466,8 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 						backtrack = (path.at(i) == tempId ? false : backtrack);
 
 					}
-					std::cout << backtrack << '\n';
 				
 				if (backtrack) {
-					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId +2).setCurrentChar('p');
 					currentId = tempId;
 					path.push_back(currentId);
