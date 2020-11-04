@@ -24,7 +24,7 @@ public:
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
 	void readFromFile();
-	std::vector<Cell> mazingAlg(std::vector<Cell>);
+	std::vector<Cell> mazingAlg(std::vector<Cell>cellVector, int centerPoint);
 
 
 };
