@@ -26,6 +26,5 @@ public:
 	void readFromFile();
 	std::vector<Cell> mazingAlg(std::vector<Cell>cellVector, int centerPoint);
 
-
 };
 

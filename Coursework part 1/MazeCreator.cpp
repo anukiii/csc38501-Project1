@@ -19,13 +19,13 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	std::vector<Cell> cellVector = drawMap(exitPos);
 	printOnScreen(cellVector);
 	int choice;
-	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
+	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\n3:Exit\n";
 	std::cin >> choice;
 	while (std::cin.fail() || choice < 1 || choice > 3) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\nExit\n";
+		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\n3:Exit\n";
 		std::cin >> choice;
 	}
 	switch (choice) {
@@ -89,10 +89,6 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 			tempCell.setYPos(y);
 			currentTile = '.'; //default for tile in board;
 
-
-
-
-
 			//outside walls
 			currentTile = (y == 0 ? 'X' : currentTile);
 			currentTile = (y == mapSize - 1 ? 'X' : currentTile);
@@ -102,53 +98,6 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 			//centerPoint
 			centerPoint = (x == (mapSize / 2) && y == (mapSize / 2) ? idCounter : centerPoint);
 	
-
-	/*
-	
-			//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank
-			currentTile = ((mapSize / 2) - 1 <= y && y <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= x && x <= (mapSize / 2) + 1 ? ' ' : currentTile);
-
-			//centerpoint
-			currentTile = (x == (mapSize / 2) && y == (mapSize / 2) ? 'S' : currentTile);
-
-			//Exits
-			wallExitCounter = (currentTile == 'X' ? wallExitCounter + 1 : wallExitCounter);
-			//Iterates through vector of Exits
-			for (exitIt = exitPos.begin(); exitIt != exitPos.end(); exitIt++) {
-				currentTile = (*exitIt == wallExitCounter ? 'E' : currentTile);
-				*exitIt = (*exitIt == wallExitCounter ? -1 : *exitIt);//Sets it to -1 so it isn't checked again
-			}
-		*/	
-
-			//all the rest, generation alg is applied
-			
-			/*
-			if (currentTile=='S') {
-				tempCell.addConnection(idCounter - 2);
-				tempCell.addConnection(idCounter + 2);
-				tempCell.addConnection(idCounter - mapSize * 2);
-				tempCell.addConnection(idCounter + mapSize * 2);
-			}
-
-			
-			if (currentTile == '.' && x>=2 && x%2==modValue) {
-				tempCell.addConnection(idCounter-2);//2 blocks to the left
-
-			}
-			if (currentTile == '.' && x<= mapSize*mapSize - 2&& x%2==modValue) {
-				tempCell.addConnection(idCounter + 2);//2 blocks to the right
-			}
-			
-			if (currentTile == '.' && y > mapSize*2&&y%2 ==1) {
-				tempCell.addConnection(idCounter - mapSize*2); //two rows up
-			}
-			if (currentTile == '.' && y <mapSize*mapSize- (2*mapSize)&& y%2==1) {
-				tempCell.addConnection(idCounter + mapSize*2);//two rows down
-			}
-			*/
-			//currentTile = (RNG(2) == 1 && currentTile == '.' ? ' ' : currentTile);
-			//currentTile = (currentTile == '.' ? 'X' : currentTile);
-			
 			tempCell.setCurrentChar(currentTile);
 
 			vectorOfCells.push_back(tempCell);
@@ -162,15 +111,34 @@ std::vector<Cell> MazeCreator::drawMap(std::vector<int> exitPos) {
 		vectorOfCells.push_back(tempCell);
 	}
 
-
-
-	//Once empty maze is made, generate inner walls with binary tree
-
+	//Once empty maze is made, generate maze using a modified recursive backtracking alg.
 	vectorOfCells = mazingAlg(vectorOfCells,centerPoint);
+
+	//replace p withh blanks and . with walls, put in s and space around it
+	for (int i = 0; i < vectorOfCells.size(); i++) {
+		currentTile = '\n';
+
+		
+		
+
+		currentTile = (vectorOfCells.at(i).getCurrentChar() == 'p' ? ' ' : currentTile);
+		currentTile = (vectorOfCells.at(i).getCurrentChar() == '.' ? 'X' : currentTile);
+		currentTile = (vectorOfCells.at(i).getCurrentChar() == 'X' ? 'X' : currentTile);
+		currentTile = (vectorOfCells.at(i).getCurrentChar() == 'E' ? 'E' : currentTile);
+
+
+		//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank
+		currentTile = ((mapSize / 2) - 1 <= vectorOfCells.at(i).getYpos() && vectorOfCells.at(i).getYpos() <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= vectorOfCells.at(i).getXpos() && vectorOfCells.at(i).getXpos() <= (mapSize / 2) + 1 ? ' ' : currentTile);
+
+		currentTile = (vectorOfCells.at(i).getMazeId() == centerPoint ? 'S' : currentTile);
+		vectorOfCells.at(i).setCurrentChar(currentTile);
+	}
 
 	return vectorOfCells;
 }
 
+//Method isn't great and is very long. can't find a way to split it into subfunctions but works at the moment.
+//If time allows, I'll try optimize this function better also uses a lot of if statememnts for checking, idk how to change this
 std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int centerPoint) {
 	
 	std::vector<int>path;
@@ -181,6 +149,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 	bool backtrack;
 	int tries = 0;
 	int totalRuns =0;
+	int exitCounter = 0;
 	path.push_back(centerPoint);
 
 	do {
@@ -200,29 +169,39 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 				if (tempId < 0) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == 'X'|| cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if (cellVector.at(tempId).getCurrentChar() == 'p' || cellVector.at(tempId).getCurrentChar() == 'E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
 					//currentId = tempId;
 					cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
-				}
 
 
 				tempId -= mapSize +1;
 				if (tempId < 0) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == ('X')||cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if (cellVector.at(tempId).getCurrentChar() == 'p' || cellVector.at(tempId).getCurrentChar() == 'E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
 
 					for (int i = 0; i < path.size(); i++) {
 						backtrack = (path.at(i) == tempId ? false : backtrack);
 						
 					}
-				}
 				if (backtrack) {
 					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId - (mapSize+1) * 2).setCurrentChar('p');
@@ -242,30 +221,41 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 				if (tempId > mapSize*mapSize+mapSize) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == 'X'|| cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if ( cellVector.at(tempId).getCurrentChar() == 'p' || cellVector.at(tempId).getCurrentChar() == 'E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
 					//currentId = tempId;
 					cellVector.at(currentId + (mapSize + 1)).setCurrentChar('p');
-				}
 
 
 				tempId += mapSize + 1;
 				if (tempId >mapSize*mapSize +mapSize) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == 'X'||cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if (cellVector.at(tempId).getCurrentChar() == 'p' || cellVector.at(tempId).getCurrentChar() == 'E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
 
 					for (int i = 0; i < path.size(); i++) {
 						backtrack = (path.at(i) == tempId ? false : backtrack);
 
 					}
 					std::cout << backtrack << '\n';
-				}
+
 				if (backtrack) {
 					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId + (mapSize + 1) * 2).setCurrentChar('p');
@@ -283,30 +273,43 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 				if (tempId < 0) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if (cellVector.at(tempId).getCurrentChar() == 'p' || cellVector.at(tempId).getCurrentChar() == 'E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
+
 					//currentId = tempId;
 					cellVector.at(currentId -1).setCurrentChar('p');
-				}
+				
 
 
 				tempId -=1;
 				if (tempId < 0) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if (cellVector.at(tempId).getCurrentChar() == 'p' || cellVector.at(tempId).getCurrentChar() == 'E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
 
 					for (int i = 0; i < path.size(); i++) {
 						backtrack = (path.at(i) == tempId ? false : backtrack);
 
 					}
 					std::cout << backtrack << '\n';
-				}
+				
 				if (backtrack) {
 					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId - 2).setCurrentChar('p');
@@ -323,30 +326,44 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 				if (tempId >mapSize *mapSize +mapSize) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if (cellVector.at(tempId).getCurrentChar() == 'p' || cellVector.at(tempId).getCurrentChar() == 'E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
+
 					//currentId = tempId;
 					cellVector.at(currentId + 1).setCurrentChar('p');
-				}
+				
 
 
 				tempId += 1;
 				if (tempId > mapSize*mapSize+mapSize) {
 					break;
 				}
-				else if (cellVector.at(tempId).getCurrentChar() == 'X' || cellVector.at(tempId).getCurrentChar() == 'p') {
+				else if (cellVector.at(tempId).getCurrentChar() == 'p'||cellVector.at(tempId).getCurrentChar()=='E') {
 					break;
 				}
-				else {
+				else if (cellVector.at(tempId).getCurrentChar() == 'X') {
+					if (exitCounter < numExits) {
+						cellVector.at(tempId).setCurrentChar('E');
+						exitCounter++;
+					}
+					break;
+				}
+				
 
 					for (int i = 0; i < path.size(); i++) {
 						backtrack = (path.at(i) == tempId ? false : backtrack);
 
 					}
 					std::cout << backtrack << '\n';
-				}
+				
 				if (backtrack) {
 					//cellVector.at(currentId - (mapSize+1)).setCurrentChar('p');
 					cellVector.at(currentId +2).setCurrentChar('p');
@@ -361,6 +378,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 				break;
 			}
 		}
+
 		if (!valid && !path.empty()) {
 			currentId = path.at(path.size() - 1);
 			path.pop_back();
