@@ -23,7 +23,7 @@ private:
 	void readFromFile();//reads maze from file
 	std::vector<Cell> pathfinding(std::vector <Cell> vectorOfCells, int centerPoint);//pathfinding algorithm + prints path of O's
 	std::vector<Cell> mazingAlg(std::vector<Cell>vectorOFCells, int centerPoint);//mazze generation algorithm (recursive backtracker)
-
+	std::vector<Cell> collaborativePathFinding(std::vector<Cell>vectorOfCells);
 public:
 
 	void startMenu(); //Start Menu

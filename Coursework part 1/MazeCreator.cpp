@@ -83,7 +83,7 @@ std::vector<Cell> MazeCreator::drawMap() {
 	//Once empty maze is made, generate maze using a modified recursive backtracking alg.
 	vectorOfCells = mazingAlg(vectorOfCells,centerPoint);
 	vectorOfCells = mapFixer(vectorOfCells,centerPoint);
-	vectorOfCells = pathfinding(vectorOfCells, centerPoint);
+	//vectorOfCells = pathfinding(vectorOfCells, centerPoint);
 
 
 
@@ -236,7 +236,7 @@ std::vector<Cell> MazeCreator::mapFixer(std::vector<Cell> vectorOfCells, int cen
 		//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank
 		currentTile = ((mapSize / 2) - 1 <= vectorOfCells.at(i).getYpos() && vectorOfCells.at(i).getYpos() <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= vectorOfCells.at(i).getXpos() && vectorOfCells.at(i).getXpos() <= (mapSize / 2) + 1 ? ' ' : currentTile);
 
-		currentTile = (vectorOfCells.at(i).getMazeId() == centerPoint ? 'S' : currentTile);
+		currentTile = (vectorOfCells.at(i).getMazeId() == centerPoint ? 'F' : currentTile);
 		vectorOfCells.at(i).setCurrentChar(currentTile);
 	}
 	return vectorOfCells;
