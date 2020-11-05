@@ -36,12 +36,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="TestFile.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="poop.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
 </Project>
