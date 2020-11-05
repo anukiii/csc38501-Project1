@@ -110,9 +110,11 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 	int currentDistance;
 	int direction;
 	int tries;
-	int tempId;
+	int tempId = 0;
 	bool valid;
-	bool best ;
+	bool best;
+	
+
 	std::vector<int> path;
 	for (int i = 0; i < exitPos.size(); i++) {
 		currentId = exitPos.at(i);
@@ -122,7 +124,7 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 		path.push_back(currentId);
 		while (currentDistance  > 1 && failsafe<1000) {
 			failsafe++;
-			std::cout << currentDistance<<' '<<currentId << '\n';
+			//
 			tries = 0;
 			best = false;
 			direction =RNG(3);
@@ -148,7 +150,7 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 					if (tempId > mapSize * mapSize) {
 						break;
 					}
-					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X' ) {
 						break;
 					}
 					valid = true;
@@ -175,21 +177,30 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 					break;
 				}
 
+
+
 				if (valid && currentDistance > abs(destinationX - vectorOfCells.at(tempId).getXpos()) + abs(destinationY - vectorOfCells.at(tempId).getYpos())) {
-					std::cout << "best Found\n";
+					
 					currentId = tempId;
 					path.push_back(currentId);
 					currentX = vectorOfCells.at(currentId).getXpos();
 					currentY = vectorOfCells.at(currentId).getYpos();
 					currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
-					vectorOfCells.at(currentId).setCurrentChar('O');
+					vectorOfCells.at(currentId).setCurrentChar('o');
 					best = true;
+				}
+				else if (valid &&vectorOfCells.at(tempId).getCurrentChar() == 'o') {
+					best = true;
+					for (int i = 0; i < path.size(); i++) {
+						best = (path.at(i) == tempId ? false : best);
+					}
+					currentDistance = (best ? 0 : currentDistance);
 				}
 
 
 			}
-			if (!best &&!path.empty()) {
-				std::cout << "go Back\n";
+			if (!best && !path.empty()) {
+				
 				currentId = path.at(path.size() - 1);
 				path.pop_back();
 				currentX = vectorOfCells.at(currentId).getXpos();
@@ -197,6 +208,7 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 				currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
 
 			}
+			 
 
 
 
@@ -487,7 +499,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 		}
 
 
-	} while (totalRuns < mapSize*mapSize/5);
+	} while (exitCounter < numExits||totalRuns < mapSize*mapSize/5);
 
 	return cellVector;
 }
@@ -526,11 +538,11 @@ void MazeCreator::setInputMapSize()
 
 void MazeCreator::setInputNumExits()
 {
-		std::cout << "Choose number of Exits : ";
+		std::cout << "Choose number of Exits (less than size of map) : ";
 		std::cin >> numExits;
 
-		while (std::cin.fail()||numExits<1) {
-			std::cout << "Error:Please insert an integer Value : " << std::endl;
+		while (std::cin.fail()||numExits<1||numExits>=mapSize) {
+			std::cout << "Error:Please insert an integer Value less than mapsize : " << std::endl;
 			std::cin.clear();
 			std::cin.ignore(256, '\n');
 			std::cin >> numExits;
