@@ -129,7 +129,7 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 			best = false;
 			direction =RNG(3);
 			while (tries < 10 && !best) {
-				//currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
+				//Generates one of 4 directions to be used in switch statement
 				direction = RNG(3);
 				tries++;
 				valid = false;
@@ -209,26 +209,9 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 
 			}
 			 
-
-
-
-
-
-
-
-
-
-			//currentDistance = abs(currentX - destinationX) + abs(currentY - destinationY);
 		}
 
-
-
-
-
-
 	}
-
-
 
 	return vectorOfCells;
 }
@@ -284,6 +267,8 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 			backtrack = true;
 			tries++;
 			direction = RNG(3);
+
+
 
 
 			switch (direction) {
