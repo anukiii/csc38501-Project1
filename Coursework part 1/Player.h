@@ -29,7 +29,7 @@ public:
 	int getCellId();
 	bool waitStatus();
 
-	void pathFinding(std::vector<Cell> vectorOfCell);
+	void pathFinding(std::vector<Cell> vectorOfCell,int centerPoint, int mapSize);
 
 	void setPlayerId(int playerIdNew);
 	int getPlayerId();

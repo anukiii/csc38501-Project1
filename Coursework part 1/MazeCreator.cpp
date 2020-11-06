@@ -68,10 +68,12 @@ std::vector<Cell> MazeCreator::drawMap() {
 
 	for (int y = 0; y < mapSize; y++) {//Y co-ord
 		for (int x = 0; x < mapSize; x++) {//X co-ord
+			
 			idCounter++;
 			tempCell.setMazeId(idCounter);
 			tempCell.setXPos(x);
 			tempCell.setYPos(y);
+
 			currentTile = '.'; //default for tile in board;
 
 			//outside walls
@@ -86,7 +88,6 @@ std::vector<Cell> MazeCreator::drawMap() {
 			tempCell.setCurrentChar(currentTile);
 
 			vectorOfCells.push_back(tempCell);
-			tempCell.clearConnections();
 		}
 		idCounter++;
 		tempCell.setMazeId(-1);
