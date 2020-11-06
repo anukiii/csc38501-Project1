@@ -16,7 +16,7 @@ private:
 	void printOnScreen(std::vector<Cell> cellvector);//prints vector of cells in cmd
 	void generateMap(int mapSize, int numExits);//creates and populates maze file
 	void setInputMapSize();//gets user input for map size in tiles
-	void setInputNumExits();//gets user input for number of exits
+	void setInputNumberPlayers();//gets user input for number of exits
 	void setInputFileName(); //asks user what name they want to save the file
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
