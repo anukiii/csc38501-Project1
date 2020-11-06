@@ -9,6 +9,7 @@ private:
 	int numExits;
 	std::string fileName;
 
+
 	int RNG(int range); // generates a random number between 0 and range
 	std::vector<Cell> drawMap();//generates the maze in the form of a cell vector file
 	void drawToFile(std::vector<Cell> cellvector);//translates cell vector to text file
@@ -24,6 +25,14 @@ private:
 	std::vector<Cell> pathfinding(std::vector <Cell> vectorOfCells, int centerPoint);//pathfinding algorithm + prints path of O's
 	std::vector<Cell> mazingAlg(std::vector<Cell>vectorOFCells, int centerPoint);//mazze generation algorithm (recursive backtracker)
 	std::vector<Cell> collaborativePathFinding(std::vector<Cell>vectorOfCells);
+	//void runMaze(std::vector<Cell> vectorOfCells);
+
+
+
+	std::vector<int> calculatePlayerPath()
+	std::vector<int> findExits(std::vector<Cell> vectorOfCells);
+	bool validPath(int direction, int tempId, int currentId, std::vector<Cell> vectorOfCells);
+
 public:
 
 	void startMenu(); //Start Menu

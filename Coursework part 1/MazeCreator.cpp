@@ -12,13 +12,13 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	std::vector<Cell> cellVector = drawMap();
 	printOnScreen(cellVector);
 	int choice;
-	std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\n3:Exit\n";
+	std::cout << "\n\nPlease select one of the following options:\n1: Save empty Maze to .txt file\n2:Run Maze\n3:Return to main menu\n4:Exit\n";
 	std::cin >> choice;
 	while (std::cin.fail() || choice < 1 || choice > 3) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Return to main menu\n3:Exit\n";
+		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Run Maze\n3:Return to main menu\n4:Exit\n";
 		std::cin >> choice;
 	}
 	switch (choice) {
@@ -26,14 +26,29 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 		drawToFile(cellVector);
 		break;
 	case 2:
+		std::cout << "This feature hasn't been implemented yet";
+		break;
+	
+	case 3:
 		startMenu();
 		break;
-	case 3:
+	case 4:
 		std::cout << "Bye Bye";
 		break;
 
 	}
  }
+
+
+
+void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
+
+
+
+	printOnScreen(vectorOfCells);
+
+}
+
 
 
 void MazeCreator::printOnScreen(std::vector<Cell> cellVector) {
@@ -42,6 +57,7 @@ void MazeCreator::printOnScreen(std::vector<Cell> cellVector) {
 		std::cout << it->getCurrentChar();
 	}
 }
+
 
 std::vector<Cell> MazeCreator::drawMap() {
 	std::vector<Cell> vectorOfCells;
@@ -92,14 +108,69 @@ std::vector<Cell> MazeCreator::drawMap() {
 }
 
 
-std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int centerpoint) {
-
+std::vector<int> MazeCreator::findExits(std::vector<Cell> vectorOfCells) {
 	std::vector<int> exitPos;
 	for (int i = 0; i < vectorOfCells.size(); i++) {
 		if (vectorOfCells.at(i).getCurrentChar() == 'E') {
 			exitPos.push_back(i);
 		}
 	}
+
+	return exitPos;
+}
+
+
+bool MazeCreator::validPath(int direction, int tempId, int currentId,std::vector<Cell> vectorOfCells) {
+	switch (direction) {
+	case 0://up
+		tempId = currentId - (mapSize + 1);
+		if (tempId < 0) {
+			break;
+		}
+		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+			break;
+		}
+		return true;
+		break;
+	case 1://down
+		tempId = currentId + mapSize + 1;
+		if (tempId > mapSize * mapSize) {
+			break;
+		}
+		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+			break;
+		}
+		return  true;
+		break;
+	case 2://left
+		tempId = currentId - 1;
+		if (tempId < 0) {
+			break;
+		}
+		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+			break;
+		}
+		return  true;
+		break;
+	case 3://right
+		tempId = currentId + 1;
+		if (tempId > mapSize * mapSize) {
+			break;
+		}
+		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
+			break;
+		}
+		return true;
+		break;
+	}
+	return false;
+}
+
+
+std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int centerpoint) {
+
+	std::vector<int> exitPos = findExits(vectorOfCells);
+
 	
 	int failsafe = 0;
 	int currentId;
@@ -124,7 +195,6 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 		path.push_back(currentId);
 		while (currentDistance  > 1 && failsafe<1000) {
 			failsafe++;
-			//
 			tries = 0;
 			best = false;
 			direction =RNG(3);
@@ -132,51 +202,8 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 				//Generates one of 4 directions to be used in switch statement
 				direction = RNG(3);
 				tries++;
-				valid = false;
+				valid = validPath(direction,tempId,currentId,vectorOfCells);
 				
-				switch (direction) {
-				case 0://up
-					tempId = currentId - (mapSize+1);
-					if (tempId<0) {
-						break;
-					}
-					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
-						break;
-					}
-					valid = true;
-					break;
-				case 1://down
-					tempId = currentId + mapSize+1;
-					if (tempId > mapSize * mapSize) {
-						break;
-					}
-					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X' ) {
-						break;
-					}
-					valid = true;
-					break;
-				case 2://left
-					tempId = currentId -1;
-					if (tempId<0) {
-						break;
-					}
-					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
-						break;
-					}
-					valid = true;
-					break;
-				case 3://right
-					tempId = currentId +1;
-					if (tempId > mapSize * mapSize) {
-						break;
-					}
-					else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
-						break;
-					}
-					valid = true;
-					break;
-				}
-
 
 
 				if (valid && currentDistance > abs(destinationX - vectorOfCells.at(tempId).getXpos()) + abs(destinationY - vectorOfCells.at(tempId).getYpos())) {
@@ -215,7 +242,6 @@ std::vector<Cell> MazeCreator::pathfinding(std::vector<Cell> vectorOfCells, int 
 
 	return vectorOfCells;
 }
-
 
 
 std::vector<Cell> MazeCreator::mapFixer(std::vector<Cell> vectorOfCells, int centerPoint) {
@@ -518,11 +544,11 @@ int MazeCreator::RNG(int range) {
 void MazeCreator::setInputMapSize()
 {
 	
-		std::cout << "Choose map size (minimum 4) : ";
+		std::cout << "Choose map size (minimum 4, maximum 100) : ";
 		std::cin >> mapSize;
 
 		while (std::cin.fail()|| mapSize<4) {
-			std::cout << "Error:Please insert an integer Value less than 4: " << std::endl;
+			std::cout << "Error:Please exter a valid integer value: " << std::endl;
 			std::cin.clear();
 			std::cin.ignore(256, '\n');
 			std::cin >> mapSize;
@@ -535,7 +561,7 @@ void MazeCreator::setInputMapSize()
 
 void MazeCreator::setInputNumberPlayers()
 {
-		std::cout << "Choose number of Exits (less than size of map) : ";
+		std::cout << "Choose number of players (less than size of map) : ";
 		std::cin >> numExits;//Just one variable as its the same, one exit per player
 
 		while (std::cin.fail()||numExits<1||numExits>=mapSize) {
@@ -603,6 +629,7 @@ void MazeCreator::drawToFile(std::vector<Cell> cellVector)
 
 }
 
+//using file name, translates the text into the 
 void MazeCreator::readFromFile() {
 
 	setInputFileName();
@@ -626,6 +653,7 @@ void MazeCreator::readFromFile() {
 
 }
 
+//Start menu user selection
 void MazeCreator::startMenu() {
 	int choice;
 	std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Exit\n";
@@ -634,7 +662,7 @@ void MazeCreator::startMenu() {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Exit\n";
+		std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Generate Maze info\n4:Exit";
 		std::cin >> choice;
 	}
 
@@ -648,6 +676,10 @@ void MazeCreator::startMenu() {
 		readFromFile();
 		break;
 	case 3:
+		std::cout << "This feature hasn't been implemented yet";
+		break;
+	
+	case 4:
 		std::cout << "Bye Bye";
 		break;
 
