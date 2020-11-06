@@ -54,3 +54,13 @@ bool Player::waitStatus()
 {
 	return waiting;
 }
+
+void Player::setPlayerId(int playerIdNew)
+{
+	playerId = playerIdNew;
+}
+
+int Player::getPlayerId()
+{
+	return playerId;
+}

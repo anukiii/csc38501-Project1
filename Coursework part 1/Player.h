@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Cell.h"
 class Player
 {
 private:
@@ -8,6 +9,7 @@ private:
 	int yPos;
 	int cellId;
 	bool waiting;
+	int playerId;
 
 
 public:
@@ -26,6 +28,11 @@ public:
 	int getYpos();
 	int getCellId();
 	bool waitStatus();
+
+	void pathFinding(std::vector<Cell> vectorOfCell);
+
+	void setPlayerId(int playerIdNew);
+	int getPlayerId();
 
 };
 

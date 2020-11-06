@@ -8,8 +8,10 @@ private:
 	int mazeId; //used for connections
 	std::vector<int> connections; //-1 means no connection
 	char currentChar;//E = exit, X = wall, Space is empty, S is start point
-	double gCost;//distance from player
-	double hCost;//distance from destination
+	double fCost;// gcost + h Cost
+	double hCost;//used in case fCost parity
+
+
 public:
 	//Getters
 	int getXpos();
@@ -26,7 +28,9 @@ public:
 	void addConnection(int newConnection);
 
 	//Other
-	void clearConnections();
+	void calcFcost(int startPointX, int startPointY, int endPointX, int endPointY);//Calculates F cost
+	void calcHcost(int endPointX, int endPointY);//calculated H cost
+	int getFcost(); // used to set F cost;
 
 };
 

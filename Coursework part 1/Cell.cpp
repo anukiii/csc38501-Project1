@@ -48,6 +48,22 @@ void Cell::addConnection(int newConnection)
 
 }
 
-void Cell::clearConnections() {
-	connections.clear();
+
+int Cell::getFcost()
+{
+	return fCost;
+}
+
+void  Cell::calcFcost(int startPointX, int startPointY,int endPointX, int endPointY) {
+
+	calcHcost(endPointX, endPointY); //always needed when using F cost
+	
+	fCost = sqrt(pow((double)xPos - startPointX, 2) + pow((double)yPos - startPointY, 2)); + hCost;
+	
+
+}
+
+void Cell::calcHcost(int endPointX, int endPointY)
+{
+	hCost = sqrt(pow((double)xPos - endPointX, 2) + pow((double)yPos - endPointY, 2));
 }
