@@ -10,6 +10,7 @@ private:
 	char currentChar;//E = exit, X = wall, Space is empty, S is start point
 	double fCost;// gcost + h Cost
 	double hCost;//used in case fCost parity
+	int parentId;//Used in a*
 
 
 public:
@@ -31,6 +32,9 @@ public:
 	void calcFcost(int startPointX, int startPointY, int endPointX, int endPointY);//Calculates F cost
 	void calcHcost(int endPointX, int endPointY);//calculated H cost
 	int getFcost(); // used to set F cost;
+
+	void serParentId(int parentIdNew);
+	int getParentId();
 
 };
 

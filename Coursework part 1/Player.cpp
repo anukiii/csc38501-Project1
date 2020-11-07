@@ -63,62 +63,104 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 		vectorOfCell.at(i).calcFcost(xPos, yPos,vectorOfCell.at(centerPoint).getXpos(),vectorOfCell.at(centerPoint).getYpos());
 	}
 
+
+	std::vector<Cell> open;
+	std::vector<Cell> closed;
+
 	std::vector<Cell> neighbours;
 	bool found = false;
 	bool duplicate;
-	int tempId = cellId;
-	addToPath(tempId);
-	Cell tempCell;
+	bool inOpen;
+	Cell tempCell = vectorOfCell.at(playerId);
+	open.push_back(tempCell);
+	int tempId;
 
 	while (!found) {
+
+
+
+		//Current becomes open tile with lowest F cost
+		for(int i =0; i <open.size();i++){
+			tempCell = (i == 0 ? open.at(0) : tempCell);
+			tempCell = (tempCell.getFcost() > open.at(i).getFcost() ? open.at(i) : tempCell);
+
+		}
+
+		//Add to closed List aka. explored cells
+		closed.push_back(tempCell);
+
+		//Set Tempid to the Id of tempCell
+		tempId= tempCell.getMazeId();
+
+		//Checks if this is the target node
+		found = (tempId == centerPoint ? true : false);
+
+
+
+		inOpen = false;
 		duplicate =false;
 		neighbours.clear(); //get new set of neighbours;
 
+
+
+		//Finds if nodes are valid and traversible. If statements needed to avoid out of bounds exceptions
 		if (tempId - 1 > 0) {//left of it
-			neighbours.push_back(vectorOfCell.at(tempId - 1));
+			if (vectorOfCell.at(tempId - 1).getCurrentChar() == ' ') {
+				neighbours.push_back(vectorOfCell.at(tempId - 1));
+			}
 		}
 		if (tempId + 1 < mapSize * mapSize + mapSize) {//right of it
-			neighbours.push_back(vectorOfCell.at(tempId +1));
+			if (vectorOfCell.at(tempId + 1).getCurrentChar() == ' ') {
+				neighbours.push_back(vectorOfCell.at(tempId + 1));
+			}
 		}		
-		if (tempId + mapSize +1 < mapSize * mapSize + mapSize) {//bellow it
-			neighbours.push_back(vectorOfCell.at(tempId +mapSize+1));
+		if (tempId + mapSize + 1 < mapSize * mapSize + mapSize) {//bellow it
+			if (vectorOfCell.at(tempId + mapSize + 1).getCurrentChar() == ' ') {
+				neighbours.push_back(vectorOfCell.at(tempId + mapSize + 1));
+			}
 		}
-		if (tempId - (mapSize +1) >0) {//bellow it
-			neighbours.push_back(vectorOfCell.at(tempId -(mapSize+1)));
+		if (tempId - (mapSize + 1) > 0) {//bellow it
+			if (vectorOfCell.at(tempId - (mapSize + 1)).getCurrentChar() == ' ') {
+				neighbours.push_back(vectorOfCell.at(tempId - (mapSize + 1)));
+			}
 		}
+
 		
 		if (neighbours.empty()) {
 			std::cout << "No valid neighbours, something's wrong";								//REMOVE LATER
 			break;
 		}
 
+
 		//Finds neighbour with lowest F cost;
 		for (int i = 0; i < neighbours.size(); i++) {
-			tempCell = (i == 0 ? vectorOfCell.at(0) : tempCell);
-			tempCell = (tempCell.getFcost() > vectorOfCell.at(i).getFcost() ? vectorOfCell.at(i) : tempCell);
+			
+			
+			for (int j = 0; j < closed.size(); j++) {
+				duplicate = (neighbours.at(i).getMazeId()== closed.at(j).getMazeId() ? true:duplicate);
+			}
+			if (!duplicate) {
+				for (int j = 0; j < open.size(); j++) {
+					inOpen = (neighbours.at(i).getMazeId() == neighbours.at(j).getMazeId() ? true : inOpen);
+				}
+			}
+
+			if (!inOpen && !duplicate) {
+				neighbours.at(i).serParentId(tempId);
+				open.push_back(neighbours.at(i));
+			}
 
 		}
-
 
 		
-		for (int i = 0; i < path.size(); i++) {
-			duplicate = (path.at(i) == tempCell.getMazeId() ? true : duplicate);			//Dunno if we need this
-		}
-
-
-
-
-
-
-
-
-
-
-
-		found = (tempId == centerPoint ? true : false);
 	}
 
+	while (tempId != playerId) {
+		addToPath(tempId);
+		tempId = tempCell.getParentId();
+		tempCell = vectorOfCell.at(tempId);
 
+	}
 
 
 

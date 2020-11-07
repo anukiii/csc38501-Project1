@@ -54,6 +54,16 @@ int Cell::getFcost()
 	return fCost;
 }
 
+void Cell::serParentId(int parentIdNew)
+{
+	parentId = parentIdNew;
+}
+
+int Cell::getParentId()
+{
+	return parentId;
+}
+
 void  Cell::calcFcost(int startPointX, int startPointY,int endPointX, int endPointY) {
 
 	calcHcost(endPointX, endPointY); //always needed when using F cost
