@@ -43,12 +43,14 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 
 void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
 
-	
-		listofPlayers.at(0).advancePath();
-		if (vectorOfCells.at(listofPlayers.at(0).getCellId()).getCurrentChar() != 'p') {
-			vectorOfCells.at(listofPlayers.at(0).getCellId()).setCurrentChar('p');
-			
+	for (int i = 0; i < listofPlayers.size(); i++) {
+		std::cout << "Player's ID is" << listofPlayers.at(i).getPlayerId() << "|| and their current position is " << listofPlayers.at(i).getCellId() << "|| and the size of their path is " << listofPlayers.at(i).getPath().size() << '\n';
+		listofPlayers.at(i).advancePath();
+		if (vectorOfCells.at(listofPlayers.at(i).getCellId()).getCurrentChar() != 'p') {
+			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar('p');
+
 		}
+	}
 		//std::cout << vectorOfCells.at(listofPlayers.at(0).getCellId()).getFcost() << '\n';
 	
 	
@@ -111,9 +113,12 @@ std::vector<Cell> MazeCreator::drawMap() {
 	vectorOfCells = mazingAlg(vectorOfCells,centerPoint);
 	vectorOfCells = mapFixer(vectorOfCells,centerPoint);
 	//vectorOfCells = pathfinding(vectorOfCells, centerPoint);
+	std::cout << "Size of listOfPlayers vector : " << listofPlayers.size() << '\n';
+
 	for (int i = 0; i < listofPlayers.size(); i++) {
-		std::cout << "Size of listOfPlayers vector : "<<listofPlayers.size()<<'\n';
+		std::cout << "StartPoint for this one is : " << listofPlayers.at(i).getCellId()<<'\n';
 		listofPlayers.at(i).pathFinding(vectorOfCells, centerPoint, mapSize);
+		//	std::cout << "Size of player path after : " << listofPlayers.at(i).getPath().size()<<'\n';
 	}
 
 
@@ -125,6 +130,7 @@ std::vector<Cell> MazeCreator::drawMap() {
 
 void MazeCreator::addPlayer(int StartCellId)
 {
+	std::cout << "Player Being Added\n";
 	Player p;
 	p.setCellId(StartCellId);
 	p.setPlayerId(listofPlayers.size());

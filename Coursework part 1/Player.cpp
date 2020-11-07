@@ -68,6 +68,7 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 	int destX = vectorOfCell.at(centerPoint).getXpos();
 	int destY = vectorOfCell.at(centerPoint).getYpos();
 	vectorOfCell.at(currentPos).calcFcost(xPos,yPos,destX,destY); // calc first f cost
+	std::cout << "Destination X is " << destX << " and Destination Y is " << destY <<" and centerPoint is "<<centerPoint <<'\n';
 	openPositions.push_back(currentPos); // first thing in open
 	bool inClosed;
 	bool inOpen;
@@ -75,11 +76,13 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 
 
 	while(!found) {
-		//if (openPositions.empty()) {
-		//	std::cout << "open Empty error";			//DELETE LATER
-		//	break;
-		//}
-		//
+		std::cout << "Current Fcost is " << vectorOfCell.at(currentPos).getFcost()<<'\n';
+		if (openPositions.empty()) {
+			std::cout << "open Empty error\n";			//DELETE LATER
+			std::cout << "Player ID is :" << playerId<<"\n\n\n";
+			break;
+		}
+		
 		//Find lowest Fcost in openPositions vector
 		currentPos = openPositions.at(findLowestFcost(openPositions, vectorOfCell));
 
@@ -111,7 +114,7 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 			//if not, calculate F cost and add tempPos as parent node
 
 			if (!inClosed) {
-				path.push_back(neighbours.at(i));//DELETE LATER
+				//path.push_back(neighbours.at(i));//DELETE LATER
 				vectorOfCell.at(neighbours.at(i)).calcFcost(xPos, yPos, destX, destY);
 				vectorOfCell.at(neighbours.at(i)).serParentId(currentPos);
 				for (int j = 0; j < openPositions.size(); j++) {
@@ -134,7 +137,6 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 	do {
 		path.push_back(currentPos);
 		currentPos = vectorOfCell.at(currentPos).getParentId();
-
 	} while (currentPos != cellId);
 
 
@@ -158,25 +160,25 @@ std::vector<int> Player::findValidNeighbours(std::vector<Cell> vectorOfCells, in
 
 	//left
 	if (currentPosition - 1 > 0) {
-		if (vectorOfCells.at(currentPosition - 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -1).getCurrentChar()!='\n') {
+		if (vectorOfCells.at(currentPosition - 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -1).getCurrentChar()!='\n' && vectorOfCells.at(currentPosition - 1).getCurrentChar() != 'E') {
 			Neighours.push_back(currentPosition - 1);
 		}
 	}
 	//right
-	if (currentPosition + 1 < mapSize) {
-		if (vectorOfCells.at(currentPosition + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + 1).getCurrentChar() != '\n' ){
+	if (currentPosition + 1 < mapSize*mapSize) {
+		if (vectorOfCells.at(currentPosition + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + 1).getCurrentChar() != '\n' && vectorOfCells.at(currentPosition + 1).getCurrentChar() != 'E'){
 			Neighours.push_back(currentPosition + 1);
 		}
 	}
 	//up
 	if (currentPosition - (mapSize + 1) >mapSize) {
-		if (vectorOfCells.at(currentPosition - (mapSize + 1)).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -(mapSize+ 1)).getCurrentChar() != '\n') {
+		if (vectorOfCells.at(currentPosition - (mapSize + 1)).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -(mapSize+ 1)).getCurrentChar() != '\n' && vectorOfCells.at(currentPosition - (mapSize + 1)).getCurrentChar() != 'E') {
 			Neighours.push_back(currentPosition - (mapSize + 1));
 		}
 	}
 	//down
 	if (currentPosition + mapSize + 1 < mapSize * mapSize) {
-		if (vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != '\n') {
+		if (vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != '\n' && vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != 'E') {
 			Neighours.push_back(currentPosition + mapSize + 1);
 		}
 	}
