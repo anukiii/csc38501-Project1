@@ -68,12 +68,12 @@ void  Cell::calcFcost(int startPointX, int startPointY,int endPointX, int endPoi
 
 	calcHcost(endPointX, endPointY); //always needed when using F cost
 	
-	fCost = sqrt(pow((double)xPos - startPointX, 2) + pow((double)yPos - startPointY, 2)); + hCost;
+	fCost = sqrt(pow((double)xPos - (double)startPointX, 2) + pow((double)yPos - (double)startPointY, 2)); + hCost;
 	
 
 }
 
 void Cell::calcHcost(int endPointX, int endPointY)
 {
-	hCost = sqrt(pow((double)xPos - endPointX, 2) + pow((double)yPos - endPointY, 2));
+	hCost = sqrt(pow((double)xPos - (double)endPointX, 2) + pow((double)yPos - (double)endPointY, 2));
 }

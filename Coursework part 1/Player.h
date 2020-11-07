@@ -34,5 +34,7 @@ public:
 	void setPlayerId(int playerIdNew);
 	int getPlayerId();
 
+	void advancePath();
+
 };
 

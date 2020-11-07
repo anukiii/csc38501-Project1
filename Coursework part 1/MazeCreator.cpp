@@ -26,7 +26,7 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 		drawToFile(cellVector);
 		break;
 	case 2:
-		std::cout << "This feature hasn't been implemented yet";
+		runMaze(cellVector);
 		break;
 	
 	case 3:
@@ -43,10 +43,20 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 
 void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
 
-
-
+	
+		listofPlayers.at(0).advancePath();
+		if (vectorOfCells.at(listofPlayers.at(0).getCellId()).getCurrentChar() != 'p') {
+			vectorOfCells.at(listofPlayers.at(0).getCellId()).setCurrentChar('p');
+			
+		}
+		//std::cout << vectorOfCells.at(listofPlayers.at(0).getCellId()).getFcost() << '\n';
+	
+	
 	printOnScreen(vectorOfCells);
 
+	std::cout << "\nPress enter to continue to next turn\n";
+	std::cin.ignore();
+	runMaze(vectorOfCells);
 }
 
 
@@ -106,6 +116,16 @@ std::vector<Cell> MazeCreator::drawMap() {
 
 
 	return vectorOfCells;
+}
+
+
+void MazeCreator::addPlayer(int StartCellId)
+{
+	Player p;
+	p.setCellId(StartCellId);
+	p.setPlayerId(listofPlayers.size());
+	listofPlayers.push_back(p);
+
 }
 
 
@@ -263,10 +283,17 @@ std::vector<Cell> MazeCreator::mapFixer(std::vector<Cell> vectorOfCells, int cen
 
 		//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank
 		currentTile = ((mapSize / 2) - 1 <= vectorOfCells.at(i).getYpos() && vectorOfCells.at(i).getYpos() <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= vectorOfCells.at(i).getXpos() && vectorOfCells.at(i).getXpos() <= (mapSize / 2) + 1 ? ' ' : currentTile);
-
+		std::cout << centerPoint << '\n';
 		currentTile = (vectorOfCells.at(i).getMazeId() == centerPoint ? 'F' : currentTile);
 		vectorOfCells.at(i).setCurrentChar(currentTile);
 	}
+	//Calculate paths for players
+	for (int i = 0; i < listofPlayers.size(); i++) {
+		
+		listofPlayers.at(i).pathFinding(vectorOfCells, centerPoint, mapSize);
+	}
+	std::cout << "We done pathfinding\n";
+
 	return vectorOfCells;
 }
 
@@ -313,6 +340,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId + (mapSize + 1)).setCurrentChar('P');
+						addPlayer(tempId + (mapSize + 1));
 
 						exitCounter++;
 					}
@@ -333,6 +361,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId +(mapSize + 1)).setCurrentChar('P');
+						addPlayer(tempId + mapSize + 1);
 						exitCounter++;
 					}
 					break;
@@ -367,6 +396,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId - (mapSize + 1)).setCurrentChar('P');
+						addPlayer(tempId - (mapSize + 1));
 						exitCounter++;
 					}
 					break;
@@ -385,6 +415,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId - (mapSize + 1)).setCurrentChar('P');
+						addPlayer(tempId - (mapSize + 1));
 						exitCounter++;
 					}
 					break;
@@ -418,6 +449,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId +1 ).setCurrentChar('P');
+						addPlayer(tempId + 1);
 						exitCounter++;
 					}
 					break;
@@ -438,6 +470,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId + 1).setCurrentChar('P');
+						addPlayer(tempId + 1);
 						exitCounter++;
 					}
 					break;
@@ -470,6 +503,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId - 1).setCurrentChar('P');
+						addPlayer(tempId - 1);
 						exitCounter++;
 					}
 					break;
@@ -490,6 +524,7 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 					if (exitCounter < numExits) {
 						cellVector.at(tempId).setCurrentChar('E');
 						cellVector.at(tempId - 1).setCurrentChar('P');
+						addPlayer(tempId - 1);
 						exitCounter++;
 					}
 					break;
@@ -548,7 +583,7 @@ void MazeCreator::setInputMapSize()
 		std::cout << "Choose map size (minimum 4, maximum 100) : ";
 		std::cin >> mapSize;
 
-		while (std::cin.fail()|| mapSize<4) {
+		while (std::cin.fail()|| mapSize<4 || mapSize>100) {
 			std::cout << "Error:Please exter a valid integer value: " << std::endl;
 			std::cin.clear();
 			std::cin.ignore(256, '\n');
