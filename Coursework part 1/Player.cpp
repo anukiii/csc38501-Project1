@@ -58,144 +58,133 @@ bool Player::waitStatus()
 
 void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int mapSize)
 {
-	//set Current f and h values for a*
-	//for( int i = 0; i < vectorOfCell.size(); i++) {
-	//	//if (vectorOfCell.at(i).getMazeId() != -1) {
-	//		vectorOfCell.at(i).calcFcost(xPos, yPos, vectorOfCell.at(centerPoint).getXpos(), vectorOfCell.at(centerPoint).getYpos());
-	//		std::cout << vectorOfCell.at(i).getFcost() << '\n';
-	//	//}
-	//}
 
 
-	std::vector<Cell> open;
-	std::vector<Cell> closed;
-
-	std::vector<Cell> neighbours;
-	bool found = false;
-	bool duplicate;
+	bool found = false; //check if current position is the centerpoint
+	std::vector<int> openPositions;
+	std::vector<int> closedPositions;
+	std::vector<int> neighbours;
+	int currentPos = cellId;
+	int destX = vectorOfCell.at(centerPoint).getXpos();
+	int destY = vectorOfCell.at(centerPoint).getYpos();
+	vectorOfCell.at(currentPos).calcFcost(xPos,yPos,destX,destY); // calc first f cost
+	openPositions.push_back(currentPos); // first thing in open
+	bool inClosed;
 	bool inOpen;
-	int tempId = cellId;
-	open.push_back(vectorOfCell.at(tempId));
-	int openPositionToRemove =0;
-
-	while (!found) {
 
 
 
-		//Current becomes open tile with lowest F cost
-		for(int i =0; i <open.size();i++){
-
-			
-
-			tempId = (i == 0 ? open.at(0).getMazeId() : tempId);
-			openPositionToRemove = (i == 0 ? 0: openPositionToRemove);
-			
-			//openPositionToRemove = (vectorOfCell.at(tempId).getFcost() >= open.at(i).getFcost() ? i : openPositionToRemove);
-			//tempId = (vectorOfCell.at(tempId).getFcost() >= open.at(i).getFcost() ? open.at(i).getMazeId() : tempId);
-			
-		}
-
-		if (open.empty()) {
-			found = true;
-			break;
-		}
-
-		//Add to closed List aka. explored cells
-		closed.push_back(vectorOfCell.at(tempId));
+	while(!found) {
+		//if (openPositions.empty()) {
+		//	std::cout << "open Empty error";			//DELETE LATER
+		//	break;
+		//}
+		//
+		//Find lowest Fcost in openPositions vector
+		currentPos = openPositions.at(findLowestFcost(openPositions, vectorOfCell));
 
 
-		//std::cout << open.size() << ' ' << openPositionToRemove<<'\n';
-		
-		std::cout<< "whats being removed " <<(open.begin() + openPositionToRemove)->getMazeId()<<"    What should be removed " <<tempId<<'\n';
-		
-		open.erase(open.begin() + openPositionToRemove); // removes the element from open
-		//Set Tempid to the Id of tempCell
+		//Remove from open and add to close
+		std::cout <<"CurrentPosition is: "<<currentPos <<"|| Size of openPositions is: "<<openPositions.size()<<'\n';
+		openPositions.erase(openPositions.begin() + findLowestFcost(openPositions, vectorOfCell));
+		closedPositions.push_back(currentPos);
 
-		//Checks if this is the target node
-		found = (tempId == centerPoint ? true : false);
-		
-		std::cout << tempId << ' ' << centerPoint << "\n";
+		//Check if we're currently on the destination
+		found = (currentPos == centerPoint ? true : found);
 
 
-		inOpen = false;
-		duplicate =false;
-		neighbours.clear(); //get new set of neighbours;
+		//Create list of valid neighbours
+		neighbours = findValidNeighbours(vectorOfCell, currentPos, mapSize);
+		std::cout <<"CurrentPosition is: "<<currentPos<<"|| Size of neighbours Vector is: " << neighbours.size() << "\n";
 
-
-
-		//Finds if nodes are valid and traversible. If statements needed to avoid out of bounds exceptions
-		if (tempId - 1 > 0) {//left of it
-			if (vectorOfCell.at(tempId - 1).getCurrentChar() != 'X' && vectorOfCell.at(tempId - 1).getCurrentChar() != '\n') {
-				neighbours.push_back(vectorOfCell.at(tempId - 1));
-			}
-		}
-		if (tempId + 1 < mapSize * mapSize + mapSize) {//right of it
-			if (vectorOfCell.at(tempId + 1).getCurrentChar() != 'X'&& vectorOfCell.at(tempId +1).getCurrentChar() != '\n') {
-				neighbours.push_back(vectorOfCell.at(tempId + 1));
-			}
-		}		
-		if (tempId + mapSize + 1 < mapSize * mapSize + mapSize) {//bellow it
-			if (vectorOfCell.at(tempId + mapSize + 1).getCurrentChar() != 'X'&& vectorOfCell.at(tempId +mapSize +1).getCurrentChar() != '\n') {
-				neighbours.push_back(vectorOfCell.at(tempId + mapSize + 1));
-			}
-		}
-		if (tempId - (mapSize + 1) > 0) {//above it
-			if (vectorOfCell.at(tempId - (mapSize + 1)).getCurrentChar() != 'X'&& vectorOfCell.at(tempId -(mapSize+ 1)).getCurrentChar() != '\n') {
-				neighbours.push_back(vectorOfCell.at(tempId - (mapSize + 1)));
-			}
-		}
-
-
-		if (neighbours.empty()) {
-			std::cout << "No valid neighbours, something's wrong";								//REMOVE LATER
-			break;
-		}
-
-		std::cout << neighbours.size() << '\n';
-
-		//up to here it works neighbor wise;
-
-		for (int i = 0; i < neighbours.size(); i++) {
+		for (int i = 0; i<neighbours.size(); i++) {
+			inClosed = false;
+			inOpen = false;
+			//See if neighbours are in closed vector
 			
 			
+			for (int j = 0; j < closedPositions.size(); j++) {
+				inClosed = (neighbours.at(i) == closedPositions.at(j) ? true : inClosed);
+			}
+
 			
+			//if not, calculate F cost and add tempPos as parent node
 
-			//check if it's in closed vector
-			for (int j = 0; j < closed.size(); j++) {
-				duplicate = (closed.at(j).getMazeId() == neighbours.at(i).getMazeId() ? true : duplicate);
-			}
-
-			//check if it's in open
-			for (int j = 0; j < open.size(); j++) {
-				vectorOfCell.at(neighbours.at(i).getMazeId()).calcFcost(xPos,yPos,vectorOfCell.at(centerPoint).getXpos(), vectorOfCell.at(centerPoint).getYpos());
-				inOpen = (open.at(j).getMazeId() == neighbours.at(i).getMazeId() ? true : inOpen);
-			}
-
-			if (!duplicate) {
-				path.push_back(neighbours.at(i).getMazeId());										//Testing stuff
-				vectorOfCell.at(neighbours.at(i).getMazeId()).serParentId(tempId);
-				if (!inOpen) {
-					open.push_back(vectorOfCell.at(neighbours.at(i).getMazeId()));
+			if (!inClosed) {
+				path.push_back(neighbours.at(i));//DELETE LATER
+				vectorOfCell.at(neighbours.at(i)).calcFcost(xPos, yPos, destX, destY);
+				vectorOfCell.at(neighbours.at(i)).serParentId(currentPos);
+				for (int j = 0; j < openPositions.size(); j++) {
+					inOpen = (neighbours.at(i) == openPositions.at(j) ? true : inOpen);
 				}
+				//if not in open, add to open
+				if (!inOpen) {
+					openPositions.push_back(neighbours.at(i));
+				}
+
 			}
+			
 
 		}
 
-		
 	}
-	
 
-	
-	/*while (tempId != cellId) {
-		addToPath(tempId);
-		tempId = tempCell.getParentId();
-		tempCell = vectorOfCell.at(tempId);
+	//Once we've found position, create the path, backtracking 
 
-	}*/
+	do {
+		path.push_back(currentPos);
+		currentPos = vectorOfCell.at(currentPos).getParentId();
+
+	} while (currentPos != cellId);
 
 
 
 }
+
+
+int Player::findLowestFcost(std::vector<int> openPositions, std::vector<Cell> vectorOfCells) {
+	int lowestPosition =0;
+	for (int i = 0; i < openPositions.size(); i++) {
+		lowestPosition = (vectorOfCells.at(i).getFcost() < vectorOfCells.at(lowestPosition).getFcost() ? i : lowestPosition);
+	}
+
+	return lowestPosition;
+
+
+}
+std::vector<int> Player::findValidNeighbours(std::vector<Cell> vectorOfCells, int currentPosition, int mapSize) {
+
+	std::vector<int> Neighours;
+
+	//left
+	if (currentPosition - 1 > 0) {
+		if (vectorOfCells.at(currentPosition - 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -1).getCurrentChar()!='\n') {
+			Neighours.push_back(currentPosition - 1);
+		}
+	}
+	//right
+	if (currentPosition + 1 < mapSize) {
+		if (vectorOfCells.at(currentPosition + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + 1).getCurrentChar() != '\n' ){
+			Neighours.push_back(currentPosition + 1);
+		}
+	}
+	//up
+	if (currentPosition - (mapSize + 1) >mapSize) {
+		if (vectorOfCells.at(currentPosition - (mapSize + 1)).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -(mapSize+ 1)).getCurrentChar() != '\n') {
+			Neighours.push_back(currentPosition - (mapSize + 1));
+		}
+	}
+	//down
+	if (currentPosition + mapSize + 1 < mapSize * mapSize) {
+		if (vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != '\n') {
+			Neighours.push_back(currentPosition + mapSize + 1);
+		}
+	}
+
+	return Neighours;
+
+}
+
 
 void Player::setPlayerId(int playerIdNew)
 {

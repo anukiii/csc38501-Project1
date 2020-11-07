@@ -111,6 +111,10 @@ std::vector<Cell> MazeCreator::drawMap() {
 	vectorOfCells = mazingAlg(vectorOfCells,centerPoint);
 	vectorOfCells = mapFixer(vectorOfCells,centerPoint);
 	//vectorOfCells = pathfinding(vectorOfCells, centerPoint);
+	for (int i = 0; i < listofPlayers.size(); i++) {
+		std::cout << "Size of listOfPlayers vector : "<<listofPlayers.size()<<'\n';
+		listofPlayers.at(i).pathFinding(vectorOfCells, centerPoint, mapSize);
+	}
 
 
 
@@ -283,16 +287,9 @@ std::vector<Cell> MazeCreator::mapFixer(std::vector<Cell> vectorOfCells, int cen
 
 		//Inner 3x3 blank, checks for range of distance of 1 unit in all directions of midpoint and makes it blank
 		currentTile = ((mapSize / 2) - 1 <= vectorOfCells.at(i).getYpos() && vectorOfCells.at(i).getYpos() <= (mapSize / 2) + 1 && (mapSize / 2) - 1 <= vectorOfCells.at(i).getXpos() && vectorOfCells.at(i).getXpos() <= (mapSize / 2) + 1 ? ' ' : currentTile);
-		std::cout << centerPoint << '\n';
 		currentTile = (vectorOfCells.at(i).getMazeId() == centerPoint ? 'F' : currentTile);
 		vectorOfCells.at(i).setCurrentChar(currentTile);
 	}
-	//Calculate paths for players
-	for (int i = 0; i < listofPlayers.size(); i++) {
-		
-		listofPlayers.at(i).pathFinding(vectorOfCells, centerPoint, mapSize);
-	}
-	std::cout << "We done pathfinding\n";
 
 	return vectorOfCells;
 }
