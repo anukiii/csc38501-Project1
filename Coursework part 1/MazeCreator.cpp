@@ -12,13 +12,13 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	std::vector<Cell> cellVector = drawMap();
 	printOnScreen(cellVector);
 	int choice;
-	std::cout << "\n\nPlease select one of the following options:\n1: Save empty Maze to .txt file\n2:Run Maze\n3:Return to main menu\n4:Exit\n";
+	std::cout << "\n\nPlease select one of the following options:\n1:Save empty Maze to .txt file\n2:Run Maze\n3:Return to main menu\n4:Exit\n";
 	std::cin >> choice;
 	while (std::cin.fail() || choice < 1 || choice > 3) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "\n\nPlease select one of the following options:\n1: Save Maze to .txt file\n2:Run Maze\n3:Return to main menu\n4:Exit\n";
+		std::cout << "\n\nPlease select one of the following options:\n1:Save Maze to .txt file\n2:Run Maze\n3:Return to main menu\n4:Exit\n";
 		std::cin >> choice;
 	}
 	switch (choice) {
@@ -44,7 +44,8 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
 
 	for (int i = 0; i < listofPlayers.size(); i++) {
-		std::cout << "Player's ID is" << listofPlayers.at(i).getPlayerId() << "|| and their current position is " << listofPlayers.at(i).getCellId() << "|| and the size of their path is " << listofPlayers.at(i).getPath().size() << '\n';
+		//std::cout << "Player's ID is" << listofPlayers.at(i).getPlayerId() << "|| and their current position is " << listofPlayers.at(i).getCellId() << "|| and the size of their path is " << listofPlayers.at(i).getPath().size() << '\n';
+		vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar(' ');
 		listofPlayers.at(i).advancePath();
 		if (vectorOfCells.at(listofPlayers.at(i).getCellId()).getCurrentChar() != 'p') {
 			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar('p');
@@ -55,10 +56,30 @@ void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
 	
 	
 	printOnScreen(vectorOfCells);
+	int choice;
+	std::cout << "\n1:Continue to next turn\n2:Return to main menu\n3:Exit\n";
+	std::cin >> choice;
+	while (std::cin.fail() || choice < 1 || choice > 3) {
+		std::cout << "Error:Please Type a valid option " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+		std::cout << "\n\nPlease select one of the following options:\n1:Continue to next turn\n2 : Return to main menu\n3 : Exit\n";
+	}
 
-	std::cout << "\nPress enter to continue to next turn\n";
-	std::cin.ignore();
-	runMaze(vectorOfCells);
+	switch (choice) {
+
+	case 1:
+		runMaze(vectorOfCells);
+		break;
+	case 2:
+		startMenu();
+		break;
+	case 3:
+		std::cout << "Bye bye";
+		break;
+	
+	}
+
 }
 
 
@@ -113,10 +134,10 @@ std::vector<Cell> MazeCreator::drawMap() {
 	vectorOfCells = mazingAlg(vectorOfCells,centerPoint);
 	vectorOfCells = mapFixer(vectorOfCells,centerPoint);
 	//vectorOfCells = pathfinding(vectorOfCells, centerPoint);
-	std::cout << "Size of listOfPlayers vector : " << listofPlayers.size() << '\n';
+	//std::cout << "Size of listOfPlayers vector : " << listofPlayers.size() << '\n';
 
 	for (int i = 0; i < listofPlayers.size(); i++) {
-		std::cout << "StartPoint for this one is : " << listofPlayers.at(i).getCellId()<<'\n';
+		//std::cout << "StartPoint for this one is : " << listofPlayers.at(i).getCellId()<<'\n';
 		listofPlayers.at(i).pathFinding(vectorOfCells, centerPoint, mapSize);
 		//	std::cout << "Size of player path after : " << listofPlayers.at(i).getPath().size()<<'\n';
 	}
@@ -130,7 +151,7 @@ std::vector<Cell> MazeCreator::drawMap() {
 
 void MazeCreator::addPlayer(int StartCellId)
 {
-	std::cout << "Player Being Added\n";
+	//std::cout << "Player Being Added\n";
 	Player p;
 	p.setCellId(StartCellId);
 	p.setPlayerId(listofPlayers.size());

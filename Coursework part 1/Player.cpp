@@ -68,7 +68,7 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 	int destX = vectorOfCell.at(centerPoint).getXpos();
 	int destY = vectorOfCell.at(centerPoint).getYpos();
 	vectorOfCell.at(currentPos).calcFcost(xPos,yPos,destX,destY); // calc first f cost
-	std::cout << "Destination X is " << destX << " and Destination Y is " << destY <<" and centerPoint is "<<centerPoint <<'\n';
+	//std::cout << "Destination X is " << destX << " and Destination Y is " << destY <<" and centerPoint is "<<centerPoint <<'\n';
 	openPositions.push_back(currentPos); // first thing in open
 	bool inClosed;
 	bool inOpen;
@@ -76,19 +76,19 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 
 
 	while(!found) {
-		std::cout << "Current Fcost is " << vectorOfCell.at(currentPos).getFcost()<<'\n';
-		if (openPositions.empty()) {
-			std::cout << "open Empty error\n";			//DELETE LATER
-			std::cout << "Player ID is :" << playerId<<"\n\n\n";
-			break;
-		}
+		//std::cout << "Current Fcost is " << vectorOfCell.at(currentPos).getFcost()<<'\n';
+		//if (openPositions.empty()) {
+		//	std::cout << "open Empty error\n";			//DELETE LATER
+		//	//std::cout << "Player ID is :" << playerId<<"\n\n\n";
+		//	break;
+		//}
 		
 		//Find lowest Fcost in openPositions vector
 		currentPos = openPositions.at(findLowestFcost(openPositions, vectorOfCell));
 
 
 		//Remove from open and add to close
-		std::cout <<"CurrentPosition is: "<<currentPos <<"|| Size of openPositions is: "<<openPositions.size()<<'\n';
+		//std::cout <<"CurrentPosition is: "<<currentPos <<"|| Size of openPositions is: "<<openPositions.size()<<'\n';
 		openPositions.erase(openPositions.begin() + findLowestFcost(openPositions, vectorOfCell));
 		closedPositions.push_back(currentPos);
 
@@ -98,7 +98,7 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 
 		//Create list of valid neighbours
 		neighbours = findValidNeighbours(vectorOfCell, currentPos, mapSize);
-		std::cout <<"CurrentPosition is: "<<currentPos<<"|| Size of neighbours Vector is: " << neighbours.size() << "\n";
+		//std::cout <<"CurrentPosition is: "<<currentPos<<"|| Size of neighbours Vector is: " << neighbours.size() << "\n";
 
 		for (int i = 0; i<neighbours.size(); i++) {
 			inClosed = false;
@@ -154,6 +154,8 @@ int Player::findLowestFcost(std::vector<int> openPositions, std::vector<Cell> ve
 
 
 }
+
+
 std::vector<int> Player::findValidNeighbours(std::vector<Cell> vectorOfCells, int currentPosition, int mapSize) {
 
 	std::vector<int> Neighours;
