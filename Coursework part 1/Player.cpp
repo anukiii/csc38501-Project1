@@ -78,7 +78,12 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 	while(!found) {
 		//std::cout << "Current Fcost is " << vectorOfCell.at(currentPos).getFcost()<<'\n';
 		//if (openPositions.empty()) {
-		//	std::cout << "open Empty error\n";			//DELETE LATER
+		//	std::cout << "open Empty error\n";	
+		//	std::cout << "open Empty error\n";//DELETE LATER
+		//	std::cout << "open Empty error\n";//DELETE LATER
+		//	std::cout << "open Empty error\n";//DELETE LATER
+		//	std::cout << "open Empty error\n";//DELETE LATER
+		//	std::cout << "open Empty error\n";//DELETE LATER
 		//	//std::cout << "Player ID is :" << playerId<<"\n\n\n";
 		//	break;
 		//}
@@ -114,7 +119,7 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 			//if not, calculate F cost and add tempPos as parent node
 
 			if (!inClosed) {
-				//path.push_back(neighbours.at(i));//DELETE LATER
+				path.push_back(neighbours.at(i));//DELETE LATER
 				vectorOfCell.at(neighbours.at(i)).calcFcost(xPos, yPos, destX, destY);
 				vectorOfCell.at(neighbours.at(i)).serParentId(currentPos);
 				for (int j = 0; j < openPositions.size(); j++) {

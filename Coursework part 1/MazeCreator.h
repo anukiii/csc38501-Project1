@@ -26,7 +26,7 @@ private:
 	void readFromFile();//reads maze from file
 	std::vector<Cell> mazingAlg(std::vector<Cell>vectorOFCells, int centerPoint);//mazze generation algorithm (recursive backtracker)
 	void runMaze(std::vector<Cell> vectorOfCells);
-	
+	void statistics();
 	
 	
 	void addPlayer(int StartCellId);

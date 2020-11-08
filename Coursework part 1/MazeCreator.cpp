@@ -14,7 +14,7 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	int choice;
 	std::cout << "\n\nPlease select one of the following options:\n1:Save empty Maze to .txt file\n2:Run Maze\n3:Return to main menu\n4:Exit\n";
 	std::cin >> choice;
-	while (std::cin.fail() || choice < 1 || choice > 3) {
+	while (std::cin.fail() || choice < 1 || choice > 4) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
@@ -38,6 +38,45 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 
 	}
  }
+
+
+void MazeCreator::statistics() {
+	std::vector<Cell> VectorOfCells;
+	setInputMapSize();				
+	setInputNumberPlayers();			//Change these to ask different stuff
+	std::cout << '\n';
+	int maxMapSize = mapSize;
+	int maxNumExits = numExits;
+	double averagePathSize;
+	double avergageCurrentPathSize;
+	for (int map = 5; map <= maxMapSize; map++) { //Min mapSize of 4
+		for (int pl = 1; pl <= maxNumExits; pl++) { //Min 1 player
+			mapSize = map;
+			numExits = pl;
+			averagePathSize = 0;
+			for(int j=0;j<100;j++){
+				avergageCurrentPathSize=0;
+				std::vector<Cell> cellVector = drawMap();
+
+				for (int i = 0; i < listofPlayers.size(); i++) {
+					avergageCurrentPathSize += listofPlayers.at(i).getPath().size();
+				}
+				//std::cout << "averageCurrentPathSize = " << avergageCurrentPathSize << '\n';
+			averagePathSize += avergageCurrentPathSize / listofPlayers.size();
+			listofPlayers.clear();
+			}
+			//averagePathSize = avergageCurrentPathSize;
+			
+			std::cout << "For a mapsize of " << mapSize << " with " << numExits << " players, player had to do " << averagePathSize/100 << " moves to find the exit\n\n";
+			
+		}
+
+
+	}
+
+
+}
+
 
 
 
@@ -528,10 +567,10 @@ int MazeCreator::RNG(int range) {
 void MazeCreator::setInputMapSize()
 {
 	
-		std::cout << "Choose map size (minimum 4, maximum 100) : ";
+		std::cout << "Choose map size (minimum 5, maximum 100) : ";
 		std::cin >> mapSize;
 
-		while (std::cin.fail()|| mapSize<4 || mapSize>100) {
+		while (std::cin.fail()|| mapSize<5 || mapSize>100) {
 			std::cout << "Error:Please exter a valid integer value: " << std::endl;
 			std::cin.clear();
 			std::cin.ignore(256, '\n');
@@ -640,16 +679,17 @@ void MazeCreator::readFromFile() {
 //Start menu user selection
 void MazeCreator::startMenu() {
 	int choice;
-	std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Exit\n";
+	std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Generate Maze info\n4:Exit\n";
 	std::cin >> choice;
 	while (std::cin.fail() || choice < 1 || choice > 3) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Generate Maze info\n4:Exit";
+		std::cout << "Please select one of the following options\n1:New Maze\n2:Load Maze \n3:Generate Maze info\n4:Exit\n";
 		std::cin >> choice;
 	}
 
+	listofPlayers.clear();
 	switch (choice) {
 	case 1:
 		setInputMapSize();
@@ -660,7 +700,7 @@ void MazeCreator::startMenu() {
 		readFromFile();
 		break;
 	case 3:
-		std::cout << "This feature hasn't been implemented yet";
+		statistics();
 		break;
 	
 	case 4:
