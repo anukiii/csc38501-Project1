@@ -24,18 +24,14 @@ private:
 	int getMapSize(); // returns mapSize var.
 	int getNumExits();// returns numExits var.
 	void readFromFile();//reads maze from file
-	std::vector<Cell> pathfinding(std::vector <Cell> vectorOfCells, int centerPoint);//pathfinding algorithm + prints path of O's
 	std::vector<Cell> mazingAlg(std::vector<Cell>vectorOFCells, int centerPoint);//mazze generation algorithm (recursive backtracker)
-	std::vector<Cell> collaborativePathFinding(std::vector<Cell>vectorOfCells);
 	void runMaze(std::vector<Cell> vectorOfCells);
 	
 	
 	
-	void advancePlayer(int playerId);
 	void addPlayer(int StartCellId);
 
 
-	std::vector<int> calculatePlayerPath();
 	std::vector<int> findExits(std::vector<Cell> vectorOfCells);
 	bool validPath(int direction, int tempId, int currentId, std::vector<Cell> vectorOfCells);
 
