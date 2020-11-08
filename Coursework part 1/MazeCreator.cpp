@@ -506,10 +506,10 @@ int MazeCreator::RNG(int range) {
 void MazeCreator::setInputMapSize()
 {
 	
-		std::cout << "Choose map size (minimum 4) : ";
+		std::cout << "Choose map size (minimum 5) : ";
 		std::cin >> mapSize;
 
-		while (std::cin.fail()|| mapSize<4) {
+		while (std::cin.fail()|| mapSize<5) {
 			std::cout << "Error:Please insert an integer Value less than 4: " << std::endl;
 			std::cin.clear();
 			std::cin.ignore(256, '\n');
