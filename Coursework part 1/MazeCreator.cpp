@@ -85,7 +85,7 @@ void MazeCreator::saveRanMazeToFile() {
 
 	
 	for (int i = 0; i < fullList.size(); i++) {
-		file << "\n\n\nTURN " << i+1 << "\n\n";
+		file << "\n\n";
 		for (it = fullList.at(i).begin(); it != fullList.at(i).end(); it++) {
 			file << it->getCurrentChar();
 		}
@@ -122,7 +122,6 @@ void MazeCreator::saveRanMazeToFile() {
 }
 
 void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
-	//std::vector<std::vector<Cell>> fullList;
 	int prevPosition;
 	bool mazeFinish= false;
 	bool deadlock = false;
@@ -145,7 +144,7 @@ void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
 			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar(' ');
 			listofPlayers.at(i).advancePath();
 
-			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar('p');
+			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar('P');
 		}
 
 
@@ -214,7 +213,6 @@ void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
 		}
 	}
 }
-
 
 
 void MazeCreator::printOnScreen(std::vector<Cell> cellVector) {
@@ -350,7 +348,6 @@ bool MazeCreator::validPath(int direction, int tempId, int currentId,std::vector
 	}
 	return false;
 }
-
 
 
 std::vector<Cell> MazeCreator::mapFixer(std::vector<Cell> vectorOfCells, int centerPoint) {
@@ -643,10 +640,6 @@ std::vector<Cell> MazeCreator::mazingAlg(std::vector<Cell> cellVector, int cente
 }
 
 
-
-
-
-
 //Random number Generation --
 int MazeCreator::RNG(int range) {
 	std::random_device rd;
@@ -755,6 +748,12 @@ void MazeCreator::readFromFile() {
 	if (file.is_open()) {
 		std::string tempLine;
 		while (std::getline(file, tempLine)) {
+			if (tempLine.find_first_not_of("XEPF ") != std::string::npos) {
+				file.close();
+				std::cout<<"\nInvalid File content, Please check that the correct file was sellected.\nReturning you to main menu\n\n";
+				startMenu();
+				
+			}
 			std::cout << tempLine << '\n';
 		}
 		file.close();
