@@ -38,7 +38,7 @@ public:
 
 	int findLowestFcost(std::vector<int> openPositions,std::vector<Cell> vectorOfCells);
 	std::vector<int> findValidNeighbours(std::vector<Cell> vectorOfCells, int currentPoistion,int mapSize);
-	
+	int getNextPos();
 
 };
 

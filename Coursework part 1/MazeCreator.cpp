@@ -39,7 +39,7 @@ void MazeCreator::generateMap(int mapSize, int numExits) {
 	}
  }
 
-
+//Returns statistics on average player movement based on map size and num players
 void MazeCreator::statistics() {
 	std::vector<Cell> VectorOfCells;
 	setInputMapSize();				
@@ -61,11 +61,10 @@ void MazeCreator::statistics() {
 				for (int i = 0; i < listofPlayers.size(); i++) {
 					avergageCurrentPathSize += listofPlayers.at(i).getPath().size();
 				}
-				//std::cout << "averageCurrentPathSize = " << avergageCurrentPathSize << '\n';
+
 			averagePathSize += avergageCurrentPathSize / listofPlayers.size();
 			listofPlayers.clear();
 			}
-			//averagePathSize = avergageCurrentPathSize;
 			
 			std::cout << "For a mapsize of " << mapSize << " with " << numExits << " players, player had to do " << averagePathSize/100 << " moves to find the exit\n\n";
 			
@@ -78,47 +77,142 @@ void MazeCreator::statistics() {
 }
 
 
+void MazeCreator::saveRanMazeToFile() {
+	setInputFileName();
+	std::cout << "File will be saved as " << fileName << "\n";
+	std::ofstream file(fileName);
+	std::vector<Cell>::iterator it;
 
-
-void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
-
-	for (int i = 0; i < listofPlayers.size(); i++) {
-		//std::cout << "Player's ID is" << listofPlayers.at(i).getPlayerId() << "|| and their current position is " << listofPlayers.at(i).getCellId() << "|| and the size of their path is " << listofPlayers.at(i).getPath().size() << '\n';
-		vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar(' ');
-		listofPlayers.at(i).advancePath();
-		if (vectorOfCells.at(listofPlayers.at(i).getCellId()).getCurrentChar() != 'p') {
-			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar('p');
-
+	
+	for (int i = 0; i < fullList.size(); i++) {
+		file << "\n\n\nTURN " << i+1 << "\n\n";
+		for (it = fullList.at(i).begin(); it != fullList.at(i).end(); it++) {
+			file << it->getCurrentChar();
 		}
+		
+
+
+
+		
 	}
-		//std::cout << vectorOfCells.at(listofPlayers.at(0).getCellId()).getFcost() << '\n';
-	
-	
-	printOnScreen(vectorOfCells);
+
+	file.close();
 	int choice;
-	std::cout << "\n1:Continue to next turn\n2:Return to main menu\n3:Exit\n";
+	std::cout << "\nPlease select one of the following options\n1:Return to main menu\n2:Exit\n";
 	std::cin >> choice;
-	while (std::cin.fail() || choice < 1 || choice > 3) {
+	while (std::cin.fail() || choice < 1 || choice >2) {
 		std::cout << "Error:Please Type a valid option " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "\n\nPlease select one of the following options:\n1:Continue to next turn\n2 : Return to main menu\n3 : Exit\n";
+		std::cout << "\nPlease select one of the following options\n1:Return to main menu\n2:Exit\n";
+		std::cin >> choice;
 	}
 
 	switch (choice) {
-
 	case 1:
-		runMaze(vectorOfCells);
-		break;
-	case 2:
 		startMenu();
 		break;
-	case 3:
-		std::cout << "Bye bye";
+	case 2:
+		std::cout << "Bye Bye\n";
 		break;
-	
+
+
 	}
 
+}
+
+void MazeCreator::runMaze(std::vector<Cell> vectorOfCells) {
+	//std::vector<std::vector<Cell>> fullList;
+	int prevPosition;
+	bool mazeFinish= false;
+	bool deadlock = false;
+	int waiting;
+	for (int i = 0; i < listofPlayers.size(); i++) {
+		waiting = 0;
+
+
+		if (vectorOfCells.at(listofPlayers.at(i).getNextPos()).getCurrentChar() == 'F') {
+
+			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar(' ');
+			listofPlayers.erase(listofPlayers.begin() + i);
+			i--;
+
+		}
+		else if (vectorOfCells.at(listofPlayers.at(i).getNextPos()).getCurrentChar() == 'P') {
+			waiting++;
+		}
+		else{
+			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar(' ');
+			listofPlayers.at(i).advancePath();
+
+			vectorOfCells.at(listofPlayers.at(i).getCellId()).setCurrentChar('p');
+		}
+
+
+		mazeFinish = (listofPlayers.empty() ? true : false);
+		deadlock = (waiting == listofPlayers.size() && !mazeFinish ? true : false);
+	}
+			
+	fullList.push_back(vectorOfCells);
+	printOnScreen(vectorOfCells);
+	int choice;
+
+	if (mazeFinish) {
+		std::cout << "\Maze completed!\n1:return to main menu\n2:Save player maze progression to file\n3:Exit\n";
+		std::cin >> choice;
+		while (std::cin.fail() || choice < 1 || choice > 3) {
+			std::cout << "Error:Please Type a valid option " << std::endl;
+			std::cin.clear();
+			std::cin.ignore(256, '\n');
+			std::cout << "\n\nPlease select one of the following options:\n1:return to main menu\n2:Save player maze progression\n3:Exit\n";
+		}
+		switch (choice) {
+
+		case 1:
+			startMenu();
+			break;
+		case 2:
+			saveRanMazeToFile();
+			break;
+		case 3:
+			std::cout << "Bye bye";
+			break;
+
+		}
+
+
+	}
+	else if (deadlock) {
+		std::string s = (listofPlayers.size() == numExits ? "Not solvable" : "Partially solvable");
+		std::cout << "\nDeadLock has occured! the maze is "<< s<<"\n Press enter to return to main menu\n";
+		std::cin.ignore();
+		startMenu();
+
+	}
+	else {
+		std::cout << "\n1:Continue to next turn\n2:Return to main menu\n3:Exit\n";
+		std::cin >> choice;
+		while (std::cin.fail() || choice < 1 || choice > 3) {
+			std::cout << "Error:Please Type a valid option " << std::endl;
+			std::cin.clear();
+			std::cin.ignore(256, '\n');
+			std::cout << "\n\nPlease select one of the following options:\n1:Continue to next turn\n2:Return to main menu\n3:Exit\n";
+		}
+
+		switch (choice) {
+
+		case 1:
+			runMaze(vectorOfCells);
+			break;
+		case 2:
+			startMenu();
+			break;
+		case 3:
+			std::cout << "Bye bye";
+			break;
+
+		}
+	}
 }
 
 

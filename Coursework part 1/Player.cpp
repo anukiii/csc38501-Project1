@@ -41,6 +41,11 @@ int Player::getXPos()
 	return xPos;
 }
 
+int Player::getNextPos() {
+
+	return path.at(path.size() - 1);
+}
+
 int Player::getYpos()
 {
 	return yPos;
@@ -68,7 +73,6 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 	int destX = vectorOfCell.at(centerPoint).getXpos();
 	int destY = vectorOfCell.at(centerPoint).getYpos();
 	vectorOfCell.at(currentPos).calcFcost(xPos,yPos,destX,destY); // calc first f cost
-	//std::cout << "Destination X is " << destX << " and Destination Y is " << destY <<" and centerPoint is "<<centerPoint <<'\n';
 	openPositions.push_back(currentPos); // first thing in open
 	bool inClosed;
 	bool inOpen;
@@ -76,17 +80,7 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 
 
 	while(!found) {
-		//std::cout << "Current Fcost is " << vectorOfCell.at(currentPos).getFcost()<<'\n';
-		//if (openPositions.empty()) {
-		//	std::cout << "open Empty error\n";	
-		//	std::cout << "open Empty error\n";//DELETE LATER
-		//	std::cout << "open Empty error\n";//DELETE LATER
-		//	std::cout << "open Empty error\n";//DELETE LATER
-		//	std::cout << "open Empty error\n";//DELETE LATER
-		//	std::cout << "open Empty error\n";//DELETE LATER
-		//	//std::cout << "Player ID is :" << playerId<<"\n\n\n";
-		//	break;
-		//}
+
 		
 		//Find lowest Fcost in openPositions vector
 		currentPos = openPositions.at(findLowestFcost(openPositions, vectorOfCell));
@@ -119,7 +113,6 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 			//if not, calculate F cost and add tempPos as parent node
 
 			if (!inClosed) {
-				path.push_back(neighbours.at(i));//DELETE LATER
 				vectorOfCell.at(neighbours.at(i)).calcFcost(xPos, yPos, destX, destY);
 				vectorOfCell.at(neighbours.at(i)).serParentId(currentPos);
 				for (int j = 0; j < openPositions.size(); j++) {

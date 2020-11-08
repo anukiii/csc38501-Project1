@@ -10,6 +10,9 @@ private:
 	int numExits;
 	std::string fileName;
 	std::vector<Player> listofPlayers;
+	std::vector < std::vector < Cell>> fullList;
+
+	void saveRanMazeToFile();
 
 
 	int RNG(int range); // generates a random number between 0 and range
