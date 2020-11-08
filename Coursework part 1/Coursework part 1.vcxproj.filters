@@ -18,9 +18,6 @@
     <ClInclude Include="MazeCreator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MazeGeneratorMain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>

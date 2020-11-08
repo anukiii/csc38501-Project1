@@ -54,7 +54,7 @@ int Cell::getFcost()
 	return fCost;
 }
 
-void Cell::serParentId(int parentIdNew)
+void Cell::setParentId(int parentIdNew)
 {
 	parentId = parentIdNew;
 }

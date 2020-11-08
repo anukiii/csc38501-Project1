@@ -20,21 +20,24 @@ public:
 	int getMazeId();
 	std::vector<int> getConnections();
 	char getCurrentChar();
+	int getParentId();
+	int getFcost(); // used to set F cost;
 
 	//Setters
 	void setXPos(int xPosNew);
 	void setYPos(int yPosNew);
 	void setMazeId(int mazeIdNew);
 	void setCurrentChar(int currentCharNew);
+	void setParentId(int parentIdNew);
 	void addConnection(int newConnection);
 
 	//Other
 	void calcFcost(int startPointX, int startPointY, int endPointX, int endPointY);//Calculates F cost
 	void calcHcost(int endPointX, int endPointY);//calculated H cost
-	int getFcost(); // used to set F cost;
 
-	void serParentId(int parentIdNew);
-	int getParentId();
+
+
+
 
 };
 

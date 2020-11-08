@@ -16,16 +16,6 @@ void Player::setCellId(int cellIdNew)
 	cellId = cellIdNew;
 }
 
-void Player::wait()
-{
-	waiting = true;
-}
-
-void Player::stopWait()
-{
-	waiting = false;
-}
-
 void Player::addToPath(int nextCell)
 {
 	path.push_back(nextCell);
@@ -56,11 +46,7 @@ int Player::getCellId()
 	return cellId;
 }
 
-bool Player::waitStatus()
-{
-	return waiting;
-}
-
+//Player pathfinding function
 void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int mapSize)
 {
 
@@ -87,7 +73,6 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 
 
 		//Remove from open and add to close
-		//std::cout <<"CurrentPosition is: "<<currentPos <<"|| Size of openPositions is: "<<openPositions.size()<<'\n';
 		openPositions.erase(openPositions.begin() + findLowestFcost(openPositions, vectorOfCell));
 		closedPositions.push_back(currentPos);
 
@@ -97,24 +82,21 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 
 		//Create list of valid neighbours
 		neighbours = findValidNeighbours(vectorOfCell, currentPos, mapSize);
-		//std::cout <<"CurrentPosition is: "<<currentPos<<"|| Size of neighbours Vector is: " << neighbours.size() << "\n";
 
 		for (int i = 0; i<neighbours.size(); i++) {
 			inClosed = false;
 			inOpen = false;
+
 			//See if neighbours are in closed vector
-			
-			
 			for (int j = 0; j < closedPositions.size(); j++) {
 				inClosed = (neighbours.at(i) == closedPositions.at(j) ? true : inClosed);
 			}
 
 			
 			//if not, calculate F cost and add tempPos as parent node
-
 			if (!inClosed) {
 				vectorOfCell.at(neighbours.at(i)).calcFcost(xPos, yPos, destX, destY);
-				vectorOfCell.at(neighbours.at(i)).serParentId(currentPos);
+				vectorOfCell.at(neighbours.at(i)).setParentId(currentPos);
 				for (int j = 0; j < openPositions.size(); j++) {
 					inOpen = (neighbours.at(i) == openPositions.at(j) ? true : inOpen);
 				}
@@ -131,7 +113,6 @@ void Player::pathFinding(std::vector<Cell> vectorOfCell, int centerPoint,int map
 	}
 
 	//Once we've found position, create the path, backtracking 
-
 	do {
 		path.push_back(currentPos);
 		currentPos = vectorOfCell.at(currentPos).getParentId();
@@ -156,34 +137,34 @@ int Player::findLowestFcost(std::vector<int> openPositions, std::vector<Cell> ve
 
 std::vector<int> Player::findValidNeighbours(std::vector<Cell> vectorOfCells, int currentPosition, int mapSize) {
 
-	std::vector<int> Neighours;
+	std::vector<int> neighbours;
 
 	//left
 	if (currentPosition - 1 > 0) {
 		if (vectorOfCells.at(currentPosition - 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -1).getCurrentChar()!='\n' && vectorOfCells.at(currentPosition - 1).getCurrentChar() != 'E') {
-			Neighours.push_back(currentPosition - 1);
+			neighbours.push_back(currentPosition - 1);
 		}
 	}
 	//right
 	if (currentPosition + 1 < mapSize*mapSize) {
 		if (vectorOfCells.at(currentPosition + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + 1).getCurrentChar() != '\n' && vectorOfCells.at(currentPosition + 1).getCurrentChar() != 'E'){
-			Neighours.push_back(currentPosition + 1);
+			neighbours.push_back(currentPosition + 1);
 		}
 	}
 	//up
 	if (currentPosition - (mapSize + 1) >mapSize) {
 		if (vectorOfCells.at(currentPosition - (mapSize + 1)).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition -(mapSize+ 1)).getCurrentChar() != '\n' && vectorOfCells.at(currentPosition - (mapSize + 1)).getCurrentChar() != 'E') {
-			Neighours.push_back(currentPosition - (mapSize + 1));
+			neighbours.push_back(currentPosition - (mapSize + 1));
 		}
 	}
 	//down
 	if (currentPosition + mapSize + 1 < mapSize * mapSize) {
 		if (vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != 'X' && vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != '\n' && vectorOfCells.at(currentPosition + mapSize + 1).getCurrentChar() != 'E') {
-			Neighours.push_back(currentPosition + mapSize + 1);
+			neighbours.push_back(currentPosition + mapSize + 1);
 		}
 	}
 
-	return Neighours;
+	return neighbours;
 
 }
 

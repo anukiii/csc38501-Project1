@@ -8,37 +8,35 @@ private:
 	int xPos;
 	int yPos;
 	int cellId;
-	bool waiting;
 	int playerId;
 
 
+	//Private pathfinding functions
+	int findLowestFcost(std::vector<int> openPositions,std::vector<Cell> vectorOfCells);
+	std::vector<int> findValidNeighbours(std::vector<Cell> vectorOfCells, int currentPoistion,int mapSize);
+
 public:
+	//Setters 
 	void setXpos(int xPosNew);
 	void setYpos(int yPosNew);
 	void setCellId(int cellIdNew);
-	
-	void wait();
-	void stopWait();
-
 	void addToPath(int nextCell);
+	void setPlayerId(int playerIdNew);
 
 
+	//Getters
 	std::vector<int> getPath();
 	int getXPos();
 	int getYpos();
 	int getCellId();
-	bool waitStatus();
-
-	void pathFinding(std::vector<Cell> vectorOfCell,int centerPoint, int mapSize);
-
-	void setPlayerId(int playerIdNew);
 	int getPlayerId();
-
+	int getNextPos();
+	
+	//Other
+	void pathFinding(std::vector<Cell> vectorOfCell,int centerPoint, int mapSize);
 	void advancePath();
 
-	int findLowestFcost(std::vector<int> openPositions,std::vector<Cell> vectorOfCells);
-	std::vector<int> findValidNeighbours(std::vector<Cell> vectorOfCells, int currentPoistion,int mapSize);
-	int getNextPos();
+
 
 };
 

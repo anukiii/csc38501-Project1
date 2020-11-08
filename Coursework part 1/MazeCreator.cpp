@@ -88,12 +88,7 @@ void MazeCreator::saveRanMazeToFile() {
 		file << "\n\n";
 		for (it = fullList.at(i).begin(); it != fullList.at(i).end(); it++) {
 			file << it->getCurrentChar();
-		}
-		
-
-
-
-		
+		}	
 	}
 
 	file.close();
@@ -115,8 +110,6 @@ void MazeCreator::saveRanMazeToFile() {
 	case 2:
 		std::cout << "Bye Bye\n";
 		break;
-
-
 	}
 
 }
@@ -264,13 +257,10 @@ std::vector<Cell> MazeCreator::drawMap() {
 	//Once empty maze is made, generate maze using a modified recursive backtracking alg.
 	vectorOfCells = mazingAlg(vectorOfCells,centerPoint);
 	vectorOfCells = mapFixer(vectorOfCells,centerPoint);
-	//vectorOfCells = pathfinding(vectorOfCells, centerPoint);
-	//std::cout << "Size of listOfPlayers vector : " << listofPlayers.size() << '\n';
+
 
 	for (int i = 0; i < listofPlayers.size(); i++) {
-		//std::cout << "StartPoint for this one is : " << listofPlayers.at(i).getCellId()<<'\n';
 		listofPlayers.at(i).pathFinding(vectorOfCells, centerPoint, mapSize);
-		//	std::cout << "Size of player path after : " << listofPlayers.at(i).getPath().size()<<'\n';
 	}
 
 
@@ -282,71 +272,11 @@ std::vector<Cell> MazeCreator::drawMap() {
 
 void MazeCreator::addPlayer(int StartCellId)
 {
-	//std::cout << "Player Being Added\n";
 	Player p;
 	p.setCellId(StartCellId);
 	p.setPlayerId(listofPlayers.size());
 	listofPlayers.push_back(p);
 
-}
-
-
-std::vector<int> MazeCreator::findExits(std::vector<Cell> vectorOfCells) {
-	std::vector<int> exitPos;
-	for (int i = 0; i < vectorOfCells.size(); i++) {
-		if (vectorOfCells.at(i).getCurrentChar() == 'E') {
-			exitPos.push_back(i);
-		}
-	}
-
-	return exitPos;
-}
-
-
-bool MazeCreator::validPath(int direction, int tempId, int currentId,std::vector<Cell> vectorOfCells) {
-	switch (direction) {
-	case 0://up
-		tempId = currentId - (mapSize + 1);
-		if (tempId < 0) {
-			break;
-		}
-		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
-			break;
-		}
-		return true;
-		break;
-	case 1://down
-		tempId = currentId + mapSize + 1;
-		if (tempId > mapSize * mapSize) {
-			break;
-		}
-		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
-			break;
-		}
-		return  true;
-		break;
-	case 2://left
-		tempId = currentId - 1;
-		if (tempId < 0) {
-			break;
-		}
-		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
-			break;
-		}
-		return  true;
-		break;
-	case 3://right
-		tempId = currentId + 1;
-		if (tempId > mapSize * mapSize) {
-			break;
-		}
-		else if (vectorOfCells.at(tempId).getCurrentChar() == 'X') {
-			break;
-		}
-		return true;
-		break;
-	}
-	return false;
 }
 
 
