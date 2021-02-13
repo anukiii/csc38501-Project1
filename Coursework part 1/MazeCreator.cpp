@@ -5,6 +5,8 @@
 #include <vector>
 #include "Cell.h"
 
+
+//Test
 void MazeCreator::generateMap(int mapSize, int numExits) {
 
 	std::cout << '\n';
